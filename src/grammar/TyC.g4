@@ -23,7 +23,7 @@ param_list: param_type ID;
 param_type: var_type;
 return_type: param_type | VOID_TYPE;
 
-func: (ID MEMBERACC_OP)? ID '(' arg_list ')';
+func: (ID MEMACC_OP)? ID '(' arg_list ')';
 arg_list: ID*;
 var_decl: 'int' ID;
 var_type: INT_TYPE | STRING_TYPE | FLOAT_TYPE | DOUBLE_TYPE;
@@ -93,7 +93,8 @@ FLOAT:  ('-')? DIGIT+
 	| ('.' DIGIT+)? ('E' | 'e') ('-')? DIGIT+
 	)
 ;
-STRING: '\"' LETTER*DIGIT*UNDERSCORE* '\"'
+
+STRING: '"' .*? '"';
 
 NEWLINE:'\r'? '\n' ;     // return newlines to parser (end-statement signal)
 

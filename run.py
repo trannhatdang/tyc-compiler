@@ -432,8 +432,7 @@ class TyCBuilder:
 
         env = os.environ.copy()
         env["PYTHONPATH"] = str(self.root_dir)
-        if check:
-            print(self.colors.yellow("Running lexer tests..." + ("\n\twatching..." if watch else "")))
+        print(self.colors.yellow("Running lexer tests..." + ("\n\twatching..." if watch else "")))
 
 
         curr_time = datetime.datetime

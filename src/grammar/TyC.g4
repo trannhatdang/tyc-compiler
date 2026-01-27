@@ -23,7 +23,7 @@ param_list: param_type ID;
 param_type: var_type;
 return_type: param_type | VOID_TYPE;
 
-func: (ID'.')?ID '(' arg_list ')';
+func: (ID MEMBERACC_OP)? ID '(' arg_list ')';
 arg_list: ID*;
 var_decl: 'int' ID;
 var_type: INT_TYPE | STRING_TYPE | FLOAT_TYPE | DOUBLE_TYPE;
@@ -85,9 +85,15 @@ DIGIT: [0-9];
 fragment
 UNDERSCORE: '_';
 
-ID  :   (LETTER | UNDERSCORE)LETTER*DIGIT*UNDERSCORE* ;      // match identifiers
-INT :   ('-')?DIGIT+ ;         // match integers
-FLOAT:  DIGIT+'.'DIGIT+();
+ID  :   (LETTER | UNDERSCORE) LETTER* DIGIT* UNDERSCORE* ;      // match identifiers
+INT :   ('-')? DIGIT+ ;         // match integers
+FLOAT:  ('-')? DIGIT+
+	(
+	'.' DIGIT+
+	| ('.' DIGIT+)? ('E' | 'e') ('-')? DIGIT+
+	)
+;
+STRING: '\"' LETTER*DIGIT*UNDERSCORE* '\"'
 
 NEWLINE:'\r'? '\n' ;     // return newlines to parser (end-statement signal)
 

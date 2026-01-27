@@ -31,41 +31,29 @@ import platform
 import shutil
 import subprocess
 import sys
+import time
+import datetime
+import threading
+import tempfile
+import filecmp
+from termcolor import colored, cprint
 import urllib.request
 from pathlib import Path
 
 
 class Colors:
-    """ANSI color codes for terminal output."""
-
-    def __init__(self):
-        self.supported = (
-            platform.system() != "Windows"
-            or os.environ.get("TERM")
-            or os.environ.get("ANSICON")
-            or "ANSI" in os.environ.get("TERM_PROGRAM", "")
-        )
-
-        if self.supported:
-            self.RED = "\033[31m"
-            self.GREEN = "\033[32m"
-            self.YELLOW = "\033[33m"
-            self.BLUE = "\033[34m"
-            self.RESET = "\033[0m"
-        else:
-            self.RED = self.GREEN = self.YELLOW = self.BLUE = self.RESET = ""
-
+    """Termcolor wrapper"""
     def red(self, text):
-        return f"{self.RED}{text}{self.RESET}"
+        return colored(text, "red")
 
     def green(self, text):
-        return f"{self.GREEN}{text}{self.RESET}"
+        return colored(text, "green")
 
     def yellow(self, text):
-        return f"{self.YELLOW}{text}{self.RESET}"
+        return colored(text, "yellow")
 
     def blue(self, text):
-        return f"{self.BLUE}{text}{self.RESET}"
+        return colored(text, "blue")
 
 
 class TyCBuilder:
@@ -76,7 +64,7 @@ class TyCBuilder:
         self.external_dir = self.root_dir / "external"
         self.build_dir = self.root_dir / "build"
         self.report_dir = self.root_dir / "reports"
-        self.venv_dir = self.root_dir / "venv"
+        self.venv_dir = self.root_dir / ".venv"
 
         self.antlr_version = "4.13.2"
         self.antlr_jar = f"antlr-{self.antlr_version}-complete.jar"
@@ -93,6 +81,9 @@ class TyCBuilder:
         else:
             self.venv_python3 = self.venv_dir / "bin" / "python"
             self.venv_pip = self.venv_dir / "bin" / "pip"
+
+    def clear(self):
+        os.system('cls')
 
     def run_command(self, cmd, cwd=None, check=True, capture_output=False):
         """Run a shell command."""
@@ -158,7 +149,7 @@ class TyCBuilder:
 
         return None
 
-    def show_help(self):
+    def show_help(self, **kwargs):
         """Show help information."""
         print(self.colors.blue("TyC Project - Available Commands:"))
         print()
@@ -223,7 +214,7 @@ class TyCBuilder:
         print(f"  Python version required: {self.python_version}")
         print(f"  ANTLR version: {self.antlr_version}")
 
-    def check_dependencies(self):
+    def check_dependencies(self, **kwargs):
         """Check if required dependencies are installed."""
         print(self.colors.blue("Checking required dependencies..."))
         print()
@@ -262,7 +253,7 @@ class TyCBuilder:
 
         return java_ok and python_ok
 
-    def setup_environment(self):
+    def setup_environment(self, **kwargs):
         """Set up the project environment."""
         print(self.colors.blue("Setting up project environment..."))
 
@@ -301,7 +292,7 @@ class TyCBuilder:
 
         # Upgrade pip
         print(self.colors.yellow("Upgrading pip in virtual environment..."))
-        self.run_command([str(self.venv_pip), "install", "--upgrade", "pip"])
+        self.run_command([str(self.venv_pip), "-m", "pip", "install", "--upgrade", "pip"])
 
         # Install dependencies
         print(self.colors.yellow("Installing Python dependencies..."))
@@ -309,46 +300,88 @@ class TyCBuilder:
 
         print(self.colors.green("Setup completed!"))
 
-    def build_grammar(self):
+    def watch(self, target, files, watch_kwargs):
+        init_thread = threading.Thread(target=target, kwargs=watch_kwargs)
+        init_thread.start()
+        init_thread.join()
+
+        thread = threading.Thread(target=self.build_grammar, kwargs=watch_kwargs)
+        while True:
+            old_mod_times = [os.stat(file) for file in files]
+            time.sleep(.25)
+            curr_mod_times = [os.stat(file) for file in files]
+            max_times = list(filter(lambda x: x, map(lambda x, y: x.st_mtime > y.st_mtime, curr_mod_times, old_mod_times)))
+
+            if len(max_times) == 0:
+                continue
+
+            if thread.is_alive():
+                thread.join()
+
+            thread = threading.Thread(target=target, kwargs = watch_kwargs)
+            self.clear()
+            thread.start()
+
+    def build_grammar(self, watch = False, check = True, **kwargs):
         """Build ANTLR grammar files."""
+        if self.build_dir.exists():
+            shutil.rmtree(self.build_dir)
+
         antlr_path = self.external_dir / self.antlr_jar
-        if not antlr_path.exists():
+        if check and not antlr_path.exists():
             print(self.colors.red("ANTLR jar not found. Please run 'setup' first."))
             sys.exit(1)
 
         self.build_dir.mkdir(exist_ok=True)
 
         grammar_files = list((self.root_dir / "src" / "grammar").glob("*.g4"))
-        if not grammar_files:
+        if check and not grammar_files:
             print(self.colors.red("No grammar files found in src/grammar/"))
             sys.exit(1)
 
-        print(self.colors.yellow("Compiling ANTLR grammar files..."))
-        cmd = [
-            "java",
-            "-jar",
-            str(antlr_path),
-            "-Dlanguage=Python3",
-            "-visitor",
-            "-no-listener",
-            "-o",
-            str(self.build_dir),
-        ] + [str(f) for f in grammar_files]
+        if check:
+            print(self.colors.yellow("Compiling ANTLR grammar files..." + ("\n\tand watching..." if watch else "")))
 
-        self.run_command(cmd)
+        if not watch:
+            cmd = [
+                "java",
+                "-jar",
+                str(antlr_path),
+                "-Dlanguage=Python3",
+                "-visitor",
+                "-no-listener",
+                "-o",
+                str(self.build_dir),
+            ] + [str(f) for f in grammar_files]
 
-        # Create __init__.py
-        (self.build_dir / "__init__.py").touch()
+            self.run_command(cmd)
 
-        # Copy Python files
-        lexererr_src = self.root_dir / "src" / "grammar" / "lexererr.py"
-        lexererr_dst = self.build_dir / "lexererr.py"
-        if lexererr_src.exists():
-            shutil.copy2(lexererr_src, lexererr_dst)
+            # Create __init__.py
+            (self.build_dir / "__init__.py").touch()
 
-        print(self.colors.green("ANTLR grammar files compiled to build/"))
+            # Copy Python files
+            lexererr_src = self.root_dir / "src" / "grammar" / "lexererr.py"
+            lexererr_dst = self.build_dir / "lexererr.py"
+            if lexererr_src.exists():
+                shutil.copy2(lexererr_src, lexererr_dst)
 
-    def clean_cache(self):
+            # Submissions Folder
+            sub1_dir = self.root_dir / "submissions" / "ass_1"
+            if not sub1_dir.exists():
+                sub1_dir.mkdir(parents = True, exist_ok=True)
+
+            shutil.copytree(self.build_dir, sub1_dir, dirs_exist_ok = True)
+
+            curr_time = datetime.datetime
+
+            print(self.colors.green("ANTLR grammar files compiled to build/ at " + str(curr_time.now())))
+
+            return
+
+        watch_kwargs = {"watch" : False, "check": False}
+        self.watch(target=self.build_grammar, files=grammar_files, watch_kwargs = watch_kwargs)
+
+    def clean_cache(self, **kwargs):
         """Clean Python cache files."""
         print(self.colors.yellow("Cleaning Python cache files..."))
         for pattern in ["**/__pycache__", "**/*.pyc", "**/.pytest_cache"]:
@@ -359,21 +392,21 @@ class TyCBuilder:
                     path.unlink(missing_ok=True)
         print(self.colors.green("Python cache files cleaned."))
 
-    def clean_reports(self):
+    def clean_reports(self, **kwargs):
         """Clean reports directory."""
         print(self.colors.yellow("Cleaning reports directory..."))
         if self.report_dir.exists():
             shutil.rmtree(self.report_dir)
         print(self.colors.green("Reports directory cleaned."))
 
-    def clean_venv(self):
+    def clean_venv(self, **kwargs):
         """Clean virtual environment."""
         print(self.colors.yellow("Cleaning virtual environment..."))
         if self.venv_dir.exists():
             shutil.rmtree(self.venv_dir)
         print(self.colors.green("Virtual environment cleaned."))
 
-    def clean_all(self):
+    def clean_all(self, **kwargs):
         """Clean build and external directories."""
         print(self.colors.yellow("Cleaning build directories..."))
         if self.build_dir.exists():
@@ -381,50 +414,73 @@ class TyCBuilder:
         print(self.colors.green("Cleaned build directories."))
         self.clean_cache()
 
-    def test_lexer(self):
+    def test_lexer(self, watch = False, check = True, ui = False, **kwargs):
         """Run lexer tests."""
-        if not self.build_dir.exists():
-            print(
-                self.colors.yellow("Build directory not found. Running build first...")
-            )
-            self.build_grammar()
+        grammar_files = list((self.root_dir / "src" / "grammar").glob("*.g4"))
+        if check and not grammar_files:
+            print(self.colors.red("No grammar files found in src/grammar/"))
+            sys.exit(1)
 
-        print(self.colors.yellow("Running lexer tests..."))
+        self.build_grammar()
+
         lexer_report_dir = self.report_dir / "lexer"
-        if lexer_report_dir.exists():
-            shutil.rmtree(lexer_report_dir)
-        self.report_dir.mkdir(exist_ok=True)
+        #if check and lexer_report_dir.exists():
+            #shutil.rmtree(lexer_report_dir)
+
+        if not lexer_report_dir.exists():
+            self.report_dir.mkdir(exist_ok=True)
 
         env = os.environ.copy()
         env["PYTHONPATH"] = str(self.root_dir)
+        if check:
+            print(self.colors.yellow("Running lexer tests..." + ("\n\twatching..." if watch else "")))
 
-        self.run_command(
-            [
-                str(self.venv_python3),
-                "-m",
-                "pytest",
-                "tests/test_lexer.py",
-                f"--html={lexer_report_dir}/index.html",
-                "--timeout=3",
-                "--self-contained-html",
-            ],
-            check=False,
-        )
 
-        print(
-            self.colors.green(
-                f"Lexer tests completed. Reports at {lexer_report_dir}/index.html"
+        curr_time = datetime.datetime
+        curr_time = str(curr_time.now().strftime('%Y-%m-%d %H-%M-%S'))
+
+        test_dir = str(self.root_dir / "tests" / "test_lexer.py")
+
+        if not watch:
+            self.run_command(
+                [
+                    str(self.venv_python3),
+                    "-m",
+                    "pytest",
+                    test_dir,
+                    f"--html={lexer_report_dir}/{curr_time}.html",
+                    "--timeout=3",
+                    "--self-contained-html",
+                ],
+                check=False,
             )
-        )
-        self.clean_cache()
 
-    def test_parser(self):
+            print(self.colors.green(f"Lexer tests completed. Reports at {lexer_report_dir}/{curr_time}.html"))
+            self.clean_cache()
+
+            # Submissions Folder
+            sub1_dir = self.root_dir / "submissions" / "ass_1"
+            if not sub1_dir.exists():
+                sub1_dir.mkdir(parents = True, exist_ok=True)
+
+            shutil.copy2(test_dir, sub1_dir)
+
+            return
+
+        watch_kwargs = {"watch": False, "check": False, "ui": ui}
+        watch_files = ['tests\\test_lexer.py']
+        watch_files.extend(grammar_files)
+
+        self.watch(target = self.test_lexer, files = watch_files, watch_kwargs = watch_kwargs)
+
+    def test_parser(self, watch = False, ui = False, **kwargs):
         """Run parser tests."""
-        if not self.build_dir.exists():
-            print(
-                self.colors.yellow("Build directory not found. Running build first...")
-            )
-            self.build_grammar()
+        grammar_files = list((self.root_dir / "src" / "grammar").glob("*.g4"))
+        if check and not grammar_files:
+            print(self.colors.red("No grammar files found in src/grammar/"))
+            sys.exit(1)
+
+        self.build_grammar()
 
         print(self.colors.yellow("Running parser tests..."))
         parser_report_dir = self.report_dir / "parser"
@@ -435,33 +491,50 @@ class TyCBuilder:
         env = os.environ.copy()
         env["PYTHONPATH"] = str(self.root_dir)
 
-        self.run_command(
-            [
-                str(self.venv_python3),
-                "-m",
-                "pytest",
-                "tests/test_parser.py",
-                f"--html={parser_report_dir}/index.html",
-                "--timeout=3",
-                "--self-contained-html",
-            ],
-            check=False,
-        )
+        curr_time = datetime.datetime
+        curr_time = str(curr_time.now().strftime('%Y-%m-%d %H-%M-%S'))
 
-        print(
-            self.colors.green(
-                f"Parser tests completed. Reports at {parser_report_dir}/index.html"
+        test_dir = str(self.root_dir / "tests" / "test_parser.py")
+
+        if not watch:
+            self.run_command(
+                [
+                    str(self.venv_python3),
+                    "-m",
+                    "pytest",
+                    test_dir,
+                    f"--html={parser_report_dir}\\test_parser_{curr_time}.html",
+                    "--timeout=3",
+                    "--self-contained-html",
+                ],
+                check=False,
             )
-        )
-        self.clean_cache()
 
-    def test_ast(self):
-        """Run AST generation tests."""
-        if not self.build_dir.exists():
             print(
-                self.colors.yellow("Build directory not found. Running build first...")
+                self.colors.green(
+                    f"Parser tests completed. Reports at {parser_report_dir}\\test_parser_{curr_time}.html"
+                )
             )
-            self.build_grammar()
+            self.clean_cache()
+
+            # Submissions Folder
+            sub1_dir = self.root_dir / "submissions" / "ass_1"
+            if not sub1_dir.exists():
+                sub1_dir.mkdir(parents = True, exist_ok=True)
+
+            shutil.copy2(test_dir, sub1_dir)
+
+            return
+
+        watch_kwargs = {"watch": False, "check": False, "ui": ui}
+        watch_files = ["tests\\test_parser.py"]
+        watch_files.extend(grammar_files)
+
+        self.watch(target = self.test_parser, files = watch_files, watch_kwargs = watch_kwargs)
+
+    def test_ast(self, watch = False, **kwargs):
+        """Run AST generation tests."""
+        self.build_grammar()
 
         print(self.colors.yellow("Running AST generation tests..."))
         ast_report_dir = self.report_dir / "ast"
@@ -471,6 +544,8 @@ class TyCBuilder:
 
         env = os.environ.copy()
         env["PYTHONPATH"] = str(self.root_dir)
+        curr_date = datetime.datetime
+        curr_date = curr_date.now()
 
         self.run_command(
             [
@@ -478,7 +553,7 @@ class TyCBuilder:
                 "-m",
                 "pytest",
                 "tests/test_ast_gen.py",
-                f"--html={ast_report_dir}/index.html",
+                f"--html={ast_report_dir}/test_ast_{curr_date}.html",
                 "--timeout=5",
                 "--self-contained-html",
                 "-v",
@@ -493,6 +568,30 @@ class TyCBuilder:
         )
         self.clean_cache()
 
+    def test_all(self, watch = False, ui = False, parts = ['1', '2', '3', '4'], **kwargs):
+        if not watch:
+            if '1' in parts:
+                self.test_lexer()
+                self.test_parser()
+
+            if '2' in parts:
+                self.test_ast()
+
+            return
+
+        grammar_files = list((self.root_dir / "src" / "grammar").glob("*.g4"))
+        if not grammar_files:
+            print(self.colors.red("No grammar files found in src/grammar/"))
+            sys.exit(1)
+
+        watch_files = []
+
+        if '1' in parts:
+            watch_files.extend(grammar_files)
+
+        watch_kwargs = {'watch': False, 'ui': ui}
+
+        self.watch(target = test_all, files = watch_files, watch_kwargs = watch_kwargs)
 
 def main():
     """Main entry point."""
@@ -517,10 +616,26 @@ def main():
             "test-lexer",
             "test-parser",
             "test-ast",
+            "test-all"
         ],
         help="Command to execute",
     )
 
+    parser.add_argument(
+            "--watch",
+            action="store_true"
+            )
+
+    parser.add_argument(
+            "--ui",
+            action="store_true"
+            )
+
+    parser.add_argument(
+            "--parts",
+            nargs='*'
+            )
+    
     args = parser.parse_args()
 
     builder = TyCBuilder()
@@ -537,10 +652,17 @@ def main():
         "test-lexer": builder.test_lexer,
         "test-parser": builder.test_parser,
         "test-ast": builder.test_ast,
+        "test-all": builder.test_all
+    }
+
+    kwargs = {
+            'watch': args.watch,
+            'ui': args.ui,
+            'parts': args.parts
     }
 
     if args.command in commands:
-        commands[args.command]()
+        commands[args.command](**kwargs)
     else:
         print(f"Unknown command: {args.command}")
         builder.show_help()

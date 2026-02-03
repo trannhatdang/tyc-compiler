@@ -6,30 +6,50 @@ grammar TyC;
 /*------------------------------------------------------------------------------------
 Parser Rules*/
 
-program: func_decl_list EOF;
+program: prog_stat_list EOF;
 
-stat_list: stat+;
-stat: var_decl | assign | func ';';
+prog_stat_list: prog_stat prog_stat_list | ;
+prog_stat: func_decl | struct_decl;
 
-assign: ID '=' exp;
+func_decl: return_type ID '(' param_list ')' '{' stat_list '}' ';';
+param_list: param_type ID;
+param_type: var_type;
+return_type: param_type | VOID_TYPE;
+
+struct_decl: STRUCT ID '{' var_decl_list '}' ';';
+
+stat_list: stat stat_list | stat;
+stat: var_decl | assign | func_stat;
+
+assign: ID '=' exp ';';
 exp: exp term | term;
 term: term factor | factor;
 factor: '(' exp ')' | ID | num_lit;
 num_lit: INT | FLOAT;
 
-func_decl_list: func_decl+;
-func_decl: return_type ID '(' ')';
-param_list: param_type ID;
-param_type: var_type;
-return_type: param_type | VOID_TYPE;
+var_decl_list: var_decl var_decl_list | ;
+var_decl: 'int' ID ';' ;
 
-func: (ID MEMACC_OP)? ID '(' arg_list ')';
-arg_list: ID*;
-var_decl: 'int' ID;
 var_type: INT_TYPE | STRING_TYPE | FLOAT_TYPE | DOUBLE_TYPE;
+
+func_stat: func ';' ;
+func: ID '(' arg_list ')'
+
+arg_list: arg ',' args 
+	| arg	
+	| 
+;
+args: arg | arg ',' args
+arg: ID;
 
 /*------------------------------------------------------------------------------------
 Lexer Rules*/
+
+/*------------------------------------------------------------------------------------
+Keywords*/
+
+STRUCT: 'struct';
+
 
 
 /*------------------------------------------------------------------------------------

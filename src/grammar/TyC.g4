@@ -1,5 +1,28 @@
 grammar TyC;
 
+@lexer::header {
+from lexererr import *
+}
+
+@lexer::members {
+def emit(self):
+    tk = self.type
+    if tk == self.UNCLOSE_STRING:       
+        result = super().emit();
+        raise UncloseString(result.text);
+    elif tk == self.ILLEGAL_ESCAPE:
+        result = super().emit();
+        raise IllegalEscape(result.text);
+    elif tk == self.ERROR_CHAR:
+        result = super().emit();
+        raise ErrorToken(result.text); 
+    else:
+        return super().emit();
+}
+
+options{
+	language=Python3;
+}
 
 // TODO: Define grammar rules here
 
@@ -33,13 +56,14 @@ var_decl: 'int' ID ';' ;
 var_type: INT_TYPE | STRING_TYPE | FLOAT_TYPE | DOUBLE_TYPE;
 
 func_stat: func ';' ;
-func: ID '(' arg_list ')'
+func: ID '(' arg_list ')' ;
 
 arg_list: arg ',' args 
-	| arg	
+	| arg
 	| 
 ;
-args: arg | arg ',' args
+
+args: arg ',' args | arg
 arg: ID;
 
 /*------------------------------------------------------------------------------------

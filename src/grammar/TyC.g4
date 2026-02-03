@@ -42,25 +42,26 @@ return_type: param_type | VOID_TYPE;
 struct_decl: STRUCT ID '{' var_decl_list '}' ';';
 
 stat_list: stat stat_list | stat;
-stat: var_decl | assign | func_stat;
-
-assign: ID '=' exp ';';
-exp: exp term | term;
-term: term factor | factor;
-factor: '(' exp ')' | ID | num_lit;
-num_lit: INT | FLOAT;
+stat: var_decl | block_stat | if_stat | while_stat | for_stat | switch_stat 
+	break_stat | continue_stat | return_stat | expr_stat;
 
 var_decl_list: var_decl var_decl_list | ;
 var_decl: 'int' ID ';' ;
 
 var_type: INT_TYPE | STRING_TYPE | FLOAT_TYPE | DOUBLE_TYPE;
 
-func_stat: func ';' ;
-func: ID '(' arg_list ')' ;
+expr: assign_expr | bin_expr | un_expr | pre_expr | post_expr | mem_acc_expr ';' ;
+
+assign_expr: ID '=' expr;
+bin_expr: ID bin_op expr;
+un_expr: un_op expr;
+pre_expr: pre_op expr;
+post_expr: expr post_op;
+func_expr: ID '(' arg_list ')' ;
 
 arg_list: arg ',' args 
 	| arg
-	| 
+	|
 ;
 
 args: arg ',' args | arg

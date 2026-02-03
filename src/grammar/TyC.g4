@@ -50,14 +50,17 @@ var_decl: 'int' ID ';' ;
 
 var_type: INT_TYPE | STRING_TYPE | FLOAT_TYPE | DOUBLE_TYPE;
 
-expr: assign_expr | bin_expr | un_expr | pre_expr | post_expr | mem_acc_expr ';' ;
+expr_stat: assign_expr | bin_expr | un_expr | pre_expr | post_expr | func_expr ';' ;
+
+expr: assign_expr | bin_expr | un_expr | pre_expr | post_expr | func_expr | mem_acc_expr ';' ;
 
 assign_expr: ID '=' expr;
-bin_expr: ID bin_op expr;
+bin_expr: expr bin_op expr;
 un_expr: un_op expr;
 pre_expr: pre_op expr;
 post_expr: expr post_op;
-func_expr: ID '(' arg_list ')' ;
+func_expr: expr '(' arg_list ')' ;
+mem_acc_expr: expr '.' ID ;
 
 arg_list: arg ',' args 
 	| arg
@@ -73,9 +76,18 @@ Lexer Rules*/
 /*------------------------------------------------------------------------------------
 Keywords*/
 
+AUTO: 'auto';
+BREAK: 'break';
+CASE: 'case';
+CONTINUE: 'continue';
+DEFAULT: 'default';
+ELSE: 'else';
+FOR: 'for';
+IF: 'if';
+RETURN: 'return';
 STRUCT: 'struct';
-
-
+SWITCH: 'switch';
+WHILE: 'while';
 
 /*------------------------------------------------------------------------------------
 TYPES*/
@@ -84,7 +96,6 @@ INT_TYPE: 'int' ;
 FLOAT_TYPE: 'float' ;
 STRING_TYPE: 'string' ;
 VOID_TYPE: 'void' ;
-
 
 /*------------------------------------------------------------------------------------
 OPERATORS*/
@@ -118,6 +129,8 @@ LCURLY_BRACK: '{';
 RCURLY_BRACK: '}';
 
 SEMICOLON: ';';
+COMMA: ',';
+COLON: ':';
 
 /*------------------------------------------------------------------------------------
 Common Lexer Rules*/

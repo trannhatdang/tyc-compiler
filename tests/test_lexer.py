@@ -36,7 +36,7 @@ def test_vardecl():
 
 def test_funcdecl():
     assert test_lexer('int fun()') == 'INT_TYPE,int,ID,fun,LROUND_BRACKET,(,RROUND_BRACKET,),EOF'
-=======
+
 def test_keyword_auto():
     """1. Keyword"""
     tokenizer = Tokenizer("auto")

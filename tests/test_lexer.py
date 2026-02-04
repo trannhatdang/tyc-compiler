@@ -26,16 +26,22 @@ def test_lexer(source):
     return tokenizer.get_tokens_as_string()
 
 def test_ID():
-    assert test_lexer('a') == 'ID,a,EOF'
+    assert test_lexer('a') == 'a,<EOF>'
 
 def test_INT():
-    assert test_lexer('50') == 'INT,50,EOF'
+    assert test_lexer('50') == '50,<EOF>'
 
 def test_vardecl():
-    assert test_lexer('int a;') == 'INT_TYPE,int,ID,a,SEMICOLON,;,EOF'
+    assert test_lexer('int a;') == 'int,a,;,<EOF>'
 
 def test_funcdecl():
-    assert test_lexer('int fun()') == 'INT_TYPE,int,ID,fun,LROUND_BRACKET,(,RROUND_BRACKET,),EOF'
+    assert test_lexer('int fun()') == 'int,fun,(,<EOF>'
+
+def test_funcdecl():
+    assert test_lexer('int fun(') == 'int,fun,(,<EOF>'
+
+def test_bin_op():
+    assert test_lexer('a+3=4') == 'a,+,3,=,4,<EOF>'
 
 def test_keyword_auto():
     """1. Keyword"""

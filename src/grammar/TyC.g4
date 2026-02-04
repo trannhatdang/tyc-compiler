@@ -83,15 +83,29 @@ expr_stat: assign_expr | bin_expr | un_expr | pre_expr | post_expr | func_expr '
 /*------------------------------------------------------------------------------------
 Expression*/
 
-expr: assign_expr | bin_expr | un_expr | pre_expr | post_expr | func_expr | mem_acc_expr ';' ;
+expr: assign_expr | bin_expr | un_expr | pre_expr | post_expr | func_expr | mem_acc_expr ;
 
 assign_expr: ID '=' expr ;
-bin_expr: expr bin_op expr ;
-un_expr: un_op expr ;
-pre_expr: pre_op expr ;
-post_expr: expr post_op ;
-func_expr: expr '(' arg_list ')' ;
-mem_acc_expr: expr '.' ID ;
+
+bin_expr: bin_term bin_op bin_expr | bin_term ;
+bin_term: assign_expr | un_expr | pre_expr | post_expr | func_expr | mem_acc_expr 
+	| ID
+	| INT
+	| FLOAT
+	| STRING
+	| BOOL
+;
+
+un_expr: un_op un_term ;
+un_term: ;
+pre_expr: pre_op pre_term ;
+pre_term: ;
+post_expr: post_term post_op ;
+post_term: ;
+func_expr: func_term '(' arg_list ')' ;
+func_term: ;
+mem_acc_expr: mem_acc_term '.' ID ;
+mem_acc_term: ;
 inc_expr: '++'ID | ID'++' ;
 dec_expr: '--'ID | ID'--' ;
 

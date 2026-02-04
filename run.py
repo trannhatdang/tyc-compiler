@@ -417,30 +417,30 @@ class TyCBuilder:
     def test_lexer(self, watch = False, check = True, ui = False, **kwargs):
         """Run lexer tests."""
         grammar_files = list((self.root_dir / "src" / "grammar").glob("*.g4"))
-        if check and not grammar_files:
-            print(self.colors.red("No grammar files found in src/grammar/"))
-            sys.exit(1)
+        if not watch: 
+            if check and not grammar_files:
+                print(self.colors.red("No grammar files found in src/grammar/"))
+                sys.exit(1)
 
-        self.build_grammar()
+            self.build_grammar()
 
-        lexer_report_dir = self.report_dir / "lexer"
-        #if check and lexer_report_dir.exists():
-            #shutil.rmtree(lexer_report_dir)
+            lexer_report_dir = self.report_dir / "lexer"
+            #if check and lexer_report_dir.exists():
+                #shutil.rmtree(lexer_report_dir)
 
-        if not lexer_report_dir.exists():
-            self.report_dir.mkdir(exist_ok=True)
+            if not lexer_report_dir.exists():
+                self.report_dir.mkdir(exist_ok=True)
 
-        env = os.environ.copy()
-        env["PYTHONPATH"] = str(self.root_dir)
-        print(self.colors.yellow("Running lexer tests..." + ("\n\twatching..." if watch else "")))
+            env = os.environ.copy()
+            env["PYTHONPATH"] = str(self.root_dir)
+            print(self.colors.yellow("Running lexer tests..." + ("\n\twatching..." if watch else "")))
 
 
-        curr_time = datetime.datetime
-        curr_time = str(curr_time.now().strftime('%Y-%m-%d %H-%M-%S'))
+            curr_time = datetime.datetime
+            curr_time = str(curr_time.now().strftime('%Y-%m-%d %H-%M-%S'))
 
-        test_dir = str(self.root_dir / "tests" / "test_lexer.py")
+            test_dir = str(self.root_dir / "tests" / "test_lexer.py")
 
-        if not watch:
             self.run_command(
                 [
                     str(self.venv_python3),
@@ -567,6 +567,18 @@ class TyCBuilder:
         )
         self.clean_cache()
 
+    def test_gui(self, watch = False, ui = False, **kwargs):
+        if not watch:
+            grammar_file = open(self.root_dir / "src" / "grammar" / "TyC.g4")
+            java_grammar_file = open(self.root_dir / "java_tester" / "TyC.g4", "w")
+
+            java_grammar_file.write(grammar_file.readline())
+
+        watch_files = [self.root_dir / "java_tester" / "test.tyc", self.root_dir / "src" / "grammar" / "TyC.g4"]
+
+        watch_kwargs = {'watch': False, 'ui': ui}
+        self.watch(target = self.test_gui, files = watch_files, watch_kwargs = watch_kwargs)
+
     def test_all(self, watch = False, ui = False, parts = ['1', '2', '3', '4'], **kwargs):
         if not watch:
             if '1' in parts:
@@ -615,6 +627,7 @@ def main():
             "test-lexer",
             "test-parser",
             "test-ast",
+            "test-gui",
             "test-all"
         ],
         help="Command to execute",
@@ -651,6 +664,7 @@ def main():
         "test-lexer": builder.test_lexer,
         "test-parser": builder.test_parser,
         "test-ast": builder.test_ast,
+        "test-gui": builder.test_gui,
         "test-all": builder.test_all
     }
 

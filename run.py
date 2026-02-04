@@ -300,13 +300,35 @@ class TyCBuilder:
 
         print(self.colors.green("Setup completed!"))
 
-    def watch(self, target, files, watch_kwargs):
+    def watch(self, target, files, watch_kwargs, constant_check = True):
         init_thread = threading.Thread(target=target, kwargs=watch_kwargs)
         init_thread.start()
         init_thread.join()
 
-        thread = threading.Thread(target=self.build_grammar, kwargs=watch_kwargs)
+        thread = threading.Thread(target=target, kwargs=watch_kwargs)
+        if constant_check:
+            while True:
+                old_mod_times = [os.stat(file) for file in files]
+                time.sleep(.25)
+                curr_mod_times = [os.stat(file) for file in files]
+                max_times = list(filter(lambda x: x, map(lambda x, y: x.st_mtime > y.st_mtime, curr_mod_times, old_mod_times)))
+
+                if len(max_times) == 0:
+                    continue
+
+                if thread.is_alive():
+                    thread.join()
+
+                thread = threading.Thread(target=target, kwargs = watch_kwargs)
+                self.clear()
+                thread.start()
+
+            return
+
         while True:
+            if thread.is_alive():
+                thread.join()
+
             old_mod_times = [os.stat(file) for file in files]
             time.sleep(.25)
             curr_mod_times = [os.stat(file) for file in files]
@@ -314,9 +336,6 @@ class TyCBuilder:
 
             if len(max_times) == 0:
                 continue
-
-            if thread.is_alive():
-                thread.join()
 
             thread = threading.Thread(target=target, kwargs = watch_kwargs)
             self.clear()
@@ -353,6 +372,7 @@ class TyCBuilder:
                 "-o",
                 str(self.build_dir),
             ] + [str(f) for f in grammar_files]
+            print(cmd)
 
             self.run_command(cmd)
 
@@ -569,15 +589,56 @@ class TyCBuilder:
 
     def test_gui(self, watch = False, ui = False, **kwargs):
         if not watch:
+            print(self.colors.yellow("Running GUI Test..."))
             grammar_file = open(self.root_dir / "src" / "grammar" / "TyC.g4")
             java_grammar_file = open(self.root_dir / "java_tester" / "TyC.g4", "w")
 
             java_grammar_file.write(grammar_file.readline())
 
+            for i in range(27):
+                grammar_file.readline()
+
+            while line := grammar_file.readline():
+                java_grammar_file.write(line)
+
+            grammar_file.close()
+            java_grammar_file.close()
+
+            antlr_path = self.external_dir / self.antlr_jar
+            java_tester_path = self.root_dir / "java_tester"
+
+            self.run_command([
+                "java",
+                "-cp",
+                antlr_path,
+                "org.antlr.v4.Tool",
+                "java_tester\\TyC.g4",
+            ])
+
+            self.run_command([
+                "javac",
+                "-cp",
+                antlr_path,
+                "java_tester\\*.java"
+            ])
+
+            self.run_command([
+                "java",
+                "-cp",
+                f"{java_tester_path};{antlr_path}",
+                "org.antlr.v4.gui.TestRig",
+                "TyC",
+                "program",
+                "java_tester\\test.tyc",
+                "-gui",
+            ])
+
+            return
+
         watch_files = [self.root_dir / "java_tester" / "test.tyc", self.root_dir / "src" / "grammar" / "TyC.g4"]
 
         watch_kwargs = {'watch': False, 'ui': ui}
-        self.watch(target = self.test_gui, files = watch_files, watch_kwargs = watch_kwargs)
+        self.watch(target = self.test_gui, files = watch_files, watch_kwargs = watch_kwargs, constant_check = False)
 
     def test_all(self, watch = False, ui = False, parts = ['1', '2', '3', '4'], **kwargs):
         if not watch:

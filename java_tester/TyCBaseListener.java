@@ -76,6 +76,18 @@ public class TyCBaseListener implements TyCListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterParam(TyCParser.ParamContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitParam(TyCParser.ParamContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterParam_type(TyCParser.Param_typeContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -244,6 +256,42 @@ public class TyCBaseListener implements TyCListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterCase_expr_list(TyCParser.Case_expr_listContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCase_expr_list(TyCParser.Case_expr_listContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterCase_expr(TyCParser.Case_exprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCase_expr(TyCParser.Case_exprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDefault_case_expr(TyCParser.Default_case_exprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDefault_case_expr(TyCParser.Default_case_exprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterBreak_stat(TyCParser.Break_statContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -292,6 +340,18 @@ public class TyCBaseListener implements TyCListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterLvalue(TyCParser.LvalueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitLvalue(TyCParser.LvalueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterExpr(TyCParser.ExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -316,25 +376,25 @@ public class TyCBaseListener implements TyCListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterBin_expr(TyCParser.Bin_exprContext ctx) { }
+	@Override public void enterInc_expr(TyCParser.Inc_exprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitBin_expr(TyCParser.Bin_exprContext ctx) { }
+	@Override public void exitInc_expr(TyCParser.Inc_exprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterBin_term(TyCParser.Bin_termContext ctx) { }
+	@Override public void enterDec_expr(TyCParser.Dec_exprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitBin_term(TyCParser.Bin_termContext ctx) { }
+	@Override public void exitDec_expr(TyCParser.Dec_exprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -455,66 +515,6 @@ public class TyCBaseListener implements TyCListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitMem_acc_term(TyCParser.Mem_acc_termContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterInc_expr(TyCParser.Inc_exprContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitInc_expr(TyCParser.Inc_exprContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterDec_expr(TyCParser.Dec_exprContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitDec_expr(TyCParser.Dec_exprContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterCase_expr_list(TyCParser.Case_expr_listContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitCase_expr_list(TyCParser.Case_expr_listContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterCase_expr(TyCParser.Case_exprContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitCase_expr(TyCParser.Case_exprContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterDefault_case_expr(TyCParser.Default_case_exprContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitDefault_case_expr(TyCParser.Default_case_exprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

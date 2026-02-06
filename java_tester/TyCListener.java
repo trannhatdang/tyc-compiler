@@ -57,6 +57,16 @@ public interface TyCListener extends ParseTreeListener {
 	 */
 	void exitParam_list(TyCParser.Param_listContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link TyCParser#param}.
+	 * @param ctx the parse tree
+	 */
+	void enterParam(TyCParser.ParamContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TyCParser#param}.
+	 * @param ctx the parse tree
+	 */
+	void exitParam(TyCParser.ParamContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link TyCParser#param_type}.
 	 * @param ctx the parse tree
 	 */
@@ -197,6 +207,36 @@ public interface TyCListener extends ParseTreeListener {
 	 */
 	void exitSwitch_stat(TyCParser.Switch_statContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link TyCParser#case_expr_list}.
+	 * @param ctx the parse tree
+	 */
+	void enterCase_expr_list(TyCParser.Case_expr_listContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TyCParser#case_expr_list}.
+	 * @param ctx the parse tree
+	 */
+	void exitCase_expr_list(TyCParser.Case_expr_listContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TyCParser#case_expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterCase_expr(TyCParser.Case_exprContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TyCParser#case_expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitCase_expr(TyCParser.Case_exprContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TyCParser#default_case_expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterDefault_case_expr(TyCParser.Default_case_exprContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TyCParser#default_case_expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitDefault_case_expr(TyCParser.Default_case_exprContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link TyCParser#break_stat}.
 	 * @param ctx the parse tree
 	 */
@@ -237,6 +277,16 @@ public interface TyCListener extends ParseTreeListener {
 	 */
 	void exitExpr_stat(TyCParser.Expr_statContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link TyCParser#lvalue}.
+	 * @param ctx the parse tree
+	 */
+	void enterLvalue(TyCParser.LvalueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TyCParser#lvalue}.
+	 * @param ctx the parse tree
+	 */
+	void exitLvalue(TyCParser.LvalueContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link TyCParser#expr}.
 	 * @param ctx the parse tree
 	 */
@@ -257,25 +307,25 @@ public interface TyCListener extends ParseTreeListener {
 	 */
 	void exitAssign_expr(TyCParser.Assign_exprContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link TyCParser#bin_expr}.
+	 * Enter a parse tree produced by {@link TyCParser#inc_expr}.
 	 * @param ctx the parse tree
 	 */
-	void enterBin_expr(TyCParser.Bin_exprContext ctx);
+	void enterInc_expr(TyCParser.Inc_exprContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link TyCParser#bin_expr}.
+	 * Exit a parse tree produced by {@link TyCParser#inc_expr}.
 	 * @param ctx the parse tree
 	 */
-	void exitBin_expr(TyCParser.Bin_exprContext ctx);
+	void exitInc_expr(TyCParser.Inc_exprContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link TyCParser#bin_term}.
+	 * Enter a parse tree produced by {@link TyCParser#dec_expr}.
 	 * @param ctx the parse tree
 	 */
-	void enterBin_term(TyCParser.Bin_termContext ctx);
+	void enterDec_expr(TyCParser.Dec_exprContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link TyCParser#bin_term}.
+	 * Exit a parse tree produced by {@link TyCParser#dec_expr}.
 	 * @param ctx the parse tree
 	 */
-	void exitBin_term(TyCParser.Bin_termContext ctx);
+	void exitDec_expr(TyCParser.Dec_exprContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link TyCParser#un_expr}.
 	 * @param ctx the parse tree
@@ -376,56 +426,6 @@ public interface TyCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitMem_acc_term(TyCParser.Mem_acc_termContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TyCParser#inc_expr}.
-	 * @param ctx the parse tree
-	 */
-	void enterInc_expr(TyCParser.Inc_exprContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TyCParser#inc_expr}.
-	 * @param ctx the parse tree
-	 */
-	void exitInc_expr(TyCParser.Inc_exprContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TyCParser#dec_expr}.
-	 * @param ctx the parse tree
-	 */
-	void enterDec_expr(TyCParser.Dec_exprContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TyCParser#dec_expr}.
-	 * @param ctx the parse tree
-	 */
-	void exitDec_expr(TyCParser.Dec_exprContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TyCParser#case_expr_list}.
-	 * @param ctx the parse tree
-	 */
-	void enterCase_expr_list(TyCParser.Case_expr_listContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TyCParser#case_expr_list}.
-	 * @param ctx the parse tree
-	 */
-	void exitCase_expr_list(TyCParser.Case_expr_listContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TyCParser#case_expr}.
-	 * @param ctx the parse tree
-	 */
-	void enterCase_expr(TyCParser.Case_exprContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TyCParser#case_expr}.
-	 * @param ctx the parse tree
-	 */
-	void exitCase_expr(TyCParser.Case_exprContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TyCParser#default_case_expr}.
-	 * @param ctx the parse tree
-	 */
-	void enterDefault_case_expr(TyCParser.Default_case_exprContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TyCParser#default_case_expr}.
-	 * @param ctx the parse tree
-	 */
-	void exitDefault_case_expr(TyCParser.Default_case_exprContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link TyCParser#arg_list}.
 	 * @param ctx the parse tree

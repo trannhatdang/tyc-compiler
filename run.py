@@ -372,7 +372,6 @@ class TyCBuilder:
                 "-o",
                 str(self.build_dir),
             ] + [str(f) for f in grammar_files]
-            print(cmd)
 
             self.run_command(cmd)
 
@@ -391,6 +390,14 @@ class TyCBuilder:
                 sub1_dir.mkdir(parents = True, exist_ok=True)
 
             shutil.copytree(self.build_dir, sub1_dir, dirs_exist_ok = True)
+            shutil.copy2(grammar_files[0], sub1_dir)
+
+            grammar_dir = self.root_dir / "src" / "grammar"
+            lexer_err_file = sub1_dir / "lexererr.py"
+            init_file = sub1_dir / "__init__.py"
+            
+            lexer_err_file.unlink(missing_ok = True)
+            init_file.unlink(missing_ok = True)
 
             curr_time = datetime.datetime
 
@@ -492,7 +499,7 @@ class TyCBuilder:
 
         self.watch(target = self.test_lexer, files = watch_files, watch_kwargs = watch_kwargs)
 
-    def test_parser(self, watch = False, ui = False, **kwargs):
+    def test_parser(self, check = True, watch = False, ui = False, **kwargs):
         """Run parser tests."""
         grammar_files = list((self.root_dir / "src" / "grammar").glob("*.g4"))
         if check and not grammar_files:

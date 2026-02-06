@@ -44,7 +44,7 @@ def test_bin_op():
     assert test_lexer('a+3=4') == 'a,+,3,=,4,<EOF>'
 
 def test_ill_escape():
-    assert test_lexer('\t \ dg') == 'sdg,<EOF>'
+    assert test_lexer('\t "gd dg') == 'sdg,<EOF>'
 
 def test_keyword_auto():
     """1. Keyword"""

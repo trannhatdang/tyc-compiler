@@ -9,7 +9,7 @@ def emit(self):
 	tk = self.type
 	if tk == self.UNCLOSE_STRING:       
 		result = super().emit();
-		raise UncloseSTRING(result.text);
+		raise UncloseString(result.text);
 	elif tk == self.ILLEGAL_ESCAPE:
 		result = super().emit();
 		raise IllegalEscape(result.text);
@@ -258,6 +258,6 @@ MULTILINE_COMMENT: '/''*' .*? '*''/' -> skip;
 
 /*-------------------------------------------------------------------------------------
 Error Characters*/
-ILLEGAL_ESCAPE: .;
-UNCLOSE_STRING: .;
+ILLEGAL_ESCAPE: '\\' ~[0btnfr];
+UNCLOSE_STRING: '"' .*? ;
 ERROR_CHAR: .;

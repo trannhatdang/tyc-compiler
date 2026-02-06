@@ -1,4 +1,5 @@
-void main() { while (1) printInt(1); }
-void main() { for (auto i = 0; i < 10; ++i) printInt(i); }
-void main() { switch (1) { case 1: printInt(1); break; } }
-void main() { int x; x = 5; }
+void main(){
+	string lmao = "\";
+	int a = c * b + c * -d;
+	return a;
+}

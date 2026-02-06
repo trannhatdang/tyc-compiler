@@ -1,33 +1,4 @@
 grammar TyC;
-
-@lexer::header {
-from lexererr import *
-}
-
-@lexer::members {
-def emit(self):
-	tk = self.type
-	if tk == self.UNCLOSE_STRING:       
-		result = super().emit();
-		raise UncloseSTRING(result.text);
-	elif tk == self.ILLEGAL_ESCAPE:
-		result = super().emit();
-		raise IllegalEscape(result.text);
-	elif tk == self.ERROR_CHAR:
-		result = super().emit();
-		raise ErrorToken(result.text); 
-	elif tk == self.STRING:
-		result = super().emit();
-		result.text = result.text.replace('\"', '');
-		return result;
-	else:
-		return super().emit();
-}
-
-options{
-	language=Python3;
-}
-
 // TODO: Define grammar rules here
 
 /*------------------------------------------------------------------------------------
@@ -63,7 +34,7 @@ stat: var_decl_stat | block_stat | if_stat | while_stat | for_stat | switch_stat
 var_decl_list: var_decl_stat var_decl_list | ;
 var_decl_stat: var_decl_expr ';' ;
 var_decl_expr: var_type ID 
-	| var_type ID '=' (INT | FLOAT | STRING | BOOL)
+	| var_type ID '=' (INT | FLOAT | string | BOOL)
 	| var_type ID '=' expr;
 var_type: INT_TYPE | STRING_TYPE | FLOAT_TYPE | AUTO;
 
@@ -104,7 +75,7 @@ expr_stat: expr ';';
 /*------------------------------------------------------------------------------------
 Expression*/
 
-lvalue: ID | INT | FLOAT | STRING | BOOL;
+lvalue: ID | INT | FLOAT | string | BOOL;
 
 expr: assign_expr
 	| term ('+' | '-') term
@@ -146,7 +117,7 @@ arg_list: arg ',' args
 ;
 
 args: arg ',' args | arg;
-arg: ID | INT | STRING | FLOAT;
+arg: ID | INT | string | FLOAT;
 
 /*------------------------------------------------------------------------------------
 Operators*/
@@ -158,6 +129,12 @@ un_op: NOT_OP | MIN_OP | ADD_OP ;
 pre_op: INC_OP | DEC_OP ;
 
 post_op: INC_OP | DEC_OP ;
+
+/*------------------------------------------------------------------------------------
+Data Types*/
+
+string: STRINGLIT | ILLEGAL_ESCAPE ;
+
 
 /*------------------------------------------------------------------------------------
 Lexer Rules*/
@@ -236,6 +213,7 @@ fragment
 ESCAPE_CHAR: '\\' [0btnfr]
 ;
 
+
 ID  :   (LETTER | UNDERSCORE) LETTER* DIGIT* UNDERSCORE* ;      // match identifiers
 INT :   ('-')? DIGIT+ ;         // match integers
 FLOAT:  ('-')? DIGIT
@@ -246,7 +224,7 @@ FLOAT:  ('-')? DIGIT
 ;
 BOOL: 'true' | 'false' ;
 
-STRING: STRINGLIT;
+//STRING: STRINGLIT | ILLEGAL_ESCAPE;
 
 STRINGLIT: '"' .*? '"';
 
@@ -258,6 +236,6 @@ MULTILINE_COMMENT: '/''*' .*? '*''/' -> skip;
 
 /*-------------------------------------------------------------------------------------
 Error Characters*/
-ILLEGAL_ESCAPE: .;
-UNCLOSE_STRING: .;
 ERROR_CHAR: .;
+ILLEGAL_ESCAPE: '"' ('\\' | '\\' ~[0btnfr] )* '"';
+UNCLOSE_STRING: .;

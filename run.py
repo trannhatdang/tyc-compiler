@@ -605,7 +605,14 @@ class TyCBuilder:
             for i in range(27):
                 grammar_file.readline()
 
+            skipping = True
             while line := grammar_file.readline():
+                if 'TODO' in line:
+                    skipping = False
+
+                if skipping:
+                    continue
+
                 java_grammar_file.write(line)
 
             grammar_file.close()

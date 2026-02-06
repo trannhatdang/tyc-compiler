@@ -6,6 +6,9 @@ TODO: Implement 100 test cases for parser
 import pytest
 from tests.utils import Parser
 
+def test_normal_fun():
+    assert Parser
+    ("int fun() {int a;int c;int b;a = b * c - c;}") == "success"
 
 # ========== Simple Test Cases (10 types) ==========
 def test_empty_program():

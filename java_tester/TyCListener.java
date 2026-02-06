@@ -307,16 +307,6 @@ public interface TyCListener extends ParseTreeListener {
 	 */
 	void exitAssign_expr(TyCParser.Assign_exprContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link TyCParser#term}.
-	 * @param ctx the parse tree
-	 */
-	void enterTerm(TyCParser.TermContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TyCParser#term}.
-	 * @param ctx the parse tree
-	 */
-	void exitTerm(TyCParser.TermContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link TyCParser#inc_expr}.
 	 * @param ctx the parse tree
 	 */
@@ -336,106 +326,6 @@ public interface TyCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDec_expr(TyCParser.Dec_exprContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TyCParser#un_expr}.
-	 * @param ctx the parse tree
-	 */
-	void enterUn_expr(TyCParser.Un_exprContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TyCParser#un_expr}.
-	 * @param ctx the parse tree
-	 */
-	void exitUn_expr(TyCParser.Un_exprContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TyCParser#un_term}.
-	 * @param ctx the parse tree
-	 */
-	void enterUn_term(TyCParser.Un_termContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TyCParser#un_term}.
-	 * @param ctx the parse tree
-	 */
-	void exitUn_term(TyCParser.Un_termContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TyCParser#pre_expr}.
-	 * @param ctx the parse tree
-	 */
-	void enterPre_expr(TyCParser.Pre_exprContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TyCParser#pre_expr}.
-	 * @param ctx the parse tree
-	 */
-	void exitPre_expr(TyCParser.Pre_exprContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TyCParser#pre_term}.
-	 * @param ctx the parse tree
-	 */
-	void enterPre_term(TyCParser.Pre_termContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TyCParser#pre_term}.
-	 * @param ctx the parse tree
-	 */
-	void exitPre_term(TyCParser.Pre_termContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TyCParser#post_expr}.
-	 * @param ctx the parse tree
-	 */
-	void enterPost_expr(TyCParser.Post_exprContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TyCParser#post_expr}.
-	 * @param ctx the parse tree
-	 */
-	void exitPost_expr(TyCParser.Post_exprContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TyCParser#post_term}.
-	 * @param ctx the parse tree
-	 */
-	void enterPost_term(TyCParser.Post_termContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TyCParser#post_term}.
-	 * @param ctx the parse tree
-	 */
-	void exitPost_term(TyCParser.Post_termContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TyCParser#func_expr}.
-	 * @param ctx the parse tree
-	 */
-	void enterFunc_expr(TyCParser.Func_exprContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TyCParser#func_expr}.
-	 * @param ctx the parse tree
-	 */
-	void exitFunc_expr(TyCParser.Func_exprContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TyCParser#func_term}.
-	 * @param ctx the parse tree
-	 */
-	void enterFunc_term(TyCParser.Func_termContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TyCParser#func_term}.
-	 * @param ctx the parse tree
-	 */
-	void exitFunc_term(TyCParser.Func_termContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TyCParser#mem_acc_expr}.
-	 * @param ctx the parse tree
-	 */
-	void enterMem_acc_expr(TyCParser.Mem_acc_exprContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TyCParser#mem_acc_expr}.
-	 * @param ctx the parse tree
-	 */
-	void exitMem_acc_expr(TyCParser.Mem_acc_exprContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TyCParser#mem_acc_term}.
-	 * @param ctx the parse tree
-	 */
-	void enterMem_acc_term(TyCParser.Mem_acc_termContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TyCParser#mem_acc_term}.
-	 * @param ctx the parse tree
-	 */
-	void exitMem_acc_term(TyCParser.Mem_acc_termContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link TyCParser#arg_list}.
 	 * @param ctx the parse tree
@@ -506,14 +396,4 @@ public interface TyCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitPost_op(TyCParser.Post_opContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TyCParser#string}.
-	 * @param ctx the parse tree
-	 */
-	void enterString(TyCParser.StringContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TyCParser#string}.
-	 * @param ctx the parse tree
-	 */
-	void exitString(TyCParser.StringContext ctx);
 }

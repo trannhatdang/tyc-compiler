@@ -300,7 +300,7 @@ class TyCBuilder:
 
         print(self.colors.green("Setup completed!"))
 
-    def watch(self, target, files, watch_kwargs, constant_check = True):
+    def watch(self, target, files, watch_kwargs, constant_check = True, force_close = False):
         init_thread = threading.Thread(target=target, kwargs=watch_kwargs)
         init_thread.start()
         init_thread.join()
@@ -502,27 +502,28 @@ class TyCBuilder:
     def test_parser(self, check = True, watch = False, ui = False, **kwargs):
         """Run parser tests."""
         grammar_files = list((self.root_dir / "src" / "grammar").glob("*.g4"))
-        if check and not grammar_files:
-            print(self.colors.red("No grammar files found in src/grammar/"))
-            sys.exit(1)
-
-        self.build_grammar()
-
-        print(self.colors.yellow("Running parser tests..."))
-        parser_report_dir = self.report_dir / "parser"
-        if parser_report_dir.exists():
-            shutil.rmtree(parser_report_dir)
-        self.report_dir.mkdir(exist_ok=True)
-
-        env = os.environ.copy()
-        env["PYTHONPATH"] = str(self.root_dir)
-
-        curr_time = datetime.datetime
-        curr_time = str(curr_time.now().strftime('%Y-%m-%d %H-%M-%S'))
-
-        test_dir = str(self.root_dir / "tests" / "test_parser.py")
 
         if not watch:
+            if check and not grammar_files:
+                print(self.colors.red("No grammar files found in src/grammar/"))
+                sys.exit(1)
+
+            self.build_grammar()
+
+            print(self.colors.yellow("Running parser tests..."))
+            parser_report_dir = self.report_dir / "parser"
+            if parser_report_dir.exists():
+                shutil.rmtree(parser_report_dir)
+            self.report_dir.mkdir(exist_ok=True)
+
+            env = os.environ.copy()
+            env["PYTHONPATH"] = str(self.root_dir)
+
+            curr_time = datetime.datetime
+            curr_time = str(curr_time.now().strftime('%Y-%m-%d %H-%M-%S'))
+
+            test_dir = str(self.root_dir / "tests" / "test_parser.py")
+
             self.run_command(
                 [
                     str(self.venv_python3),
@@ -652,7 +653,7 @@ class TyCBuilder:
         watch_files = [self.root_dir / "java_tester" / "test.tyc", self.root_dir / "src" / "grammar" / "TyC.g4"]
 
         watch_kwargs = {'watch': False, 'ui': ui}
-        self.watch(target = self.test_gui, files = watch_files, watch_kwargs = watch_kwargs, constant_check = False)
+        self.watch(target = self.test_gui, files = watch_files, watch_kwargs = watch_kwargs, constant_check = False, force_close = True)
 
     def test_all(self, watch = False, ui = False, parts = ['1', '2', '3', '4'], **kwargs):
         if not watch:

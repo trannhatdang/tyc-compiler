@@ -52,7 +52,10 @@ return_type: param_type | VOID_TYPE;
 
 /*------------------------------------------------------------------------------------
 Struct Declaration*/
-struct_decl: STRUCT ID '{' var_decl_list '}' ';';
+struct_decl: STRUCT ID
+	| STRUCT ID '=' '{' var_decl_list '}' ';'
+;
+/*dsgds*/
 
 /*------------------------------------------------------------------------------------
 Statement*/
@@ -62,7 +65,7 @@ stat: var_decl_stat | block_stat | if_stat | while_stat | for_stat | switch_stat
 
 var_decl_list: var_decl_stat var_decl_list | ;
 var_decl_stat: var_decl_expr ';' ;
-var_decl_expr: var_type ID 
+var_decl_expr: var_type ID
 	| var_type ID '=' (INT | FLOAT | STRING | BOOL)
 	| var_type ID '=' expr;
 var_type: INT_TYPE | STRING_TYPE | FLOAT_TYPE | AUTO;
@@ -99,47 +102,48 @@ continue_stat: CONTINUE ';' ;
 return_stat: RETURN expr ';' 
 	| RETURN ';' ;
 
-expr_stat: expr ';';
+expr_stat: (expr | assign_expr) ';';
 
 /*------------------------------------------------------------------------------------
 Expression*/
 
 lvalue: ID | INT | FLOAT | STRING | BOOL;
 
+/*
 expr: assign_expr
-	| term ('+' | '-') term
+	| expr OR_OP expr
+	| expr AND_OP expr
+	| expr (EQ_OP | NEQ_OP) expr
+	| expr (LESS_OP | LEQ_OP | GREAT_OP | GEQ_OP) expr
+	| expr (ADD_OP | MIN_OP) expr
+	| expr (MULT_OP | DIV_OP | MOD_OP) expr
 	| un_op expr
 	| pre_op expr
 	| expr post_op
+	| expr '(' arg_list ')'
 	| expr '.' ID
-	| func_term '(' arg_list ')'
 	| lvalue
+;*/
+
+expr: '(' expr ')'
+	| lvalue
+	| expr '.' ID
+	| expr post_op 
+	| expr '(' arg_list ')'
+	| pre_op expr
+	| un_op expr
+	| expr (MULT_OP | DIV_OP | MOD_OP) expr
+	| expr (ADD_OP | MIN_OP) expr
+	| expr (LESS_OP | LEQ_OP | GREAT_OP | GEQ_OP) expr
+	| expr (EQ_OP | NEQ_OP) expr
+	| expr AND_OP expr
+	| expr OR_OP expr
 ;
 
-assign_expr: ID '=' expr ;
-
-term: term ('*' | '/') term
-	| mem_acc_expr
-	| lvalue
-;
+assign_expr: (ID | expr '.' ID) '=' expr ;
 
 inc_expr: '++'ID | ID'++' ;
 dec_expr: '--'ID | ID'--' ;
-
-un_expr: un_op un_term ;
-un_term: ;
-pre_expr: pre_op pre_term ;
-pre_term: ;
-post_expr: post_term post_op ;
-post_term: ;
-
-func_term: 
-	| term ('+' | '-') term
-	| ID
-;
-
-mem_acc_expr: mem_acc_term '.' ID ;
-mem_acc_term: ;
 
 /*------------------------------------------------------------------------------------
 Argument*/
@@ -150,7 +154,7 @@ arg_list: arg ',' args
 ;
 
 args: arg ',' args | arg;
-arg: ID | INT | STRING | FLOAT;
+arg: ID | INT | STRING | FLOAT | expr '.' ID;
 
 /*------------------------------------------------------------------------------------
 Operators*/
@@ -237,10 +241,12 @@ fragment
 UNDERSCORE: '_';
 
 fragment
-ESCAPE_CHAR: '\\' [0btnfr]
-;
+ESCAPE_CHAR: '\\' [0btnfr];
 
-ID  :   (LETTER | UNDERSCORE) LETTER* DIGIT* UNDERSCORE* ;      // match identifiers
+fragment
+CHAR: LETTER | DIGIT | UNDERSCORE;
+
+ID  :   (LETTER | UNDERSCORE) CHAR* ;      // match identifiers
 INT :   ('-')? DIGIT+ ;         // match integers
 FLOAT:  ('-')? DIGIT
 	(

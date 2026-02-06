@@ -20,26 +20,6 @@ def test_ID():
     tokenizer = Tokenizer("a")
     assert tokenizer.get_tokens_as_string() == "a,<EOF>"
 
-'''
-def test_INT():
-    assert test_lexer('50') == '50,<EOF>'
-
-def test_vardecl():
-    assert test_lexer('int a;') == 'int,a,;,<EOF>'
-
-def test_funcdecl():
-    assert test_lexer('int fun()') == 'int,fun,(,<EOF>'
-
-def test_funcdecl():
-    assert test_lexer('int fun(') == 'int,fun,(,<EOF>'
-
-def test_bin_op():
-    assert test_lexer('a+3=4') == 'a,+,3,=,4,<EOF>'
-
-def test_ill_escape():
-    assert test_lexer('\t "gd dg') == 'sdg,<EOF>'
-'''
-
 def test_keyword_auto():
     """1. Keyword"""
     tokenizer = Tokenizer("auto")
@@ -103,4 +83,17 @@ def test_complex_expression():
 
 def test_func_1():
     tokenizer = Tokenizer("a+3();")
-    assert tokenizer.get_tokens_as_string() == "a, <EOF>"
+    assert tokenizer.get_tokens_as_string() == "a,3,(,),<EOF>"
+
+def test_func_2():
+    tokenizer = Tokenizer("(a+lmao)();")
+    assert tokenizer.get_tokens_as_string() == "(,a,+,lmao,),(,),<EOF>"
+
+def test_ass_1():
+    tokenizer = Tokenizer("a=b=c;")
+    assert tokenizer.get_tokens_as_string() == "a,=,b,=,c,<EOF>"
+
+def test_ass_2():
+    tokenizer = Tokenizer("a+b=c;")
+    assert tokenizer.get_tokens_as_string() == "a,+,b,=,c,<EOF>"
+

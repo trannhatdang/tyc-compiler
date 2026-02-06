@@ -67,3 +67,29 @@ def test_assignment_simple():
     """10. Assignment statement"""
     source = "void main() { int x; x = 5; }"
     assert Parser(source).parse() == "success"
+
+###############Expressions#################
+
+def test_exp_1():
+    source = "void main() { a = b + c; }"
+    assert Parser(source).parse() == "success"
+
+def test_exp_2():
+    source = "void main() {a + b = c}"
+    assert Parser(source).parse() == "Error on line 1 col 19: ="
+
+###############Struct#################
+def test_struct():
+    source = "struct lmao = {int a;int b;}"
+    assert Parser(source).parse() == "success"
+
+###############If Else#################
+def test_if():
+    source = "void main() {if(pong_tin) { lmao(); }}"
+    assert Parser(source).parse() == "success"
+
+
+
+
+
+

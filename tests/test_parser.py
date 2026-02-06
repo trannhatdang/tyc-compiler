@@ -23,7 +23,7 @@ def test_program_with_only_main():
 
 def test_struct_simple():
     """3. Struct declaration"""
-    source = "struct Point { int x; int y; };"
+    source = "struct Point = { int x; int y; };"
     assert Parser(source).parse() == "success"
 
 
@@ -79,8 +79,12 @@ def test_exp_2():
     assert Parser(source).parse() == "Error on line 1 col 19: ="
 
 ###############Struct#################
-def test_struct():
+def test_struct_1():
     source = "struct lmao = {int a;int b;}"
+    assert Parser(source).parse() == "Error on line 1 col 28: <EOF>"
+
+def test_struct_2():
+    source = "struct lmao = {int a;int b;};"
     assert Parser(source).parse() == "success"
 
 ###############If Else#################

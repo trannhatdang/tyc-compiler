@@ -13,8 +13,9 @@ prog_stat: func_decl | struct_decl;
 /*------------------------------------------------------------------------------------
 Function Declaration*/
 
-func_decl: return_type ID '(' param_list ')' '{' stat_list '}' ';';
-param_list: param_type ID;
+func_decl: return_type ID '(' param_list ')' '{' stat_list '}';
+param_list: param*;
+param: param_type ID;
 param_type: var_type;
 return_type: param_type | VOID_TYPE;
 
@@ -182,9 +183,14 @@ DIGIT: [0-9];
 fragment
 UNDERSCORE: '_';
 
+fragment
+ESCAPE_CHAR: '\\' [0btnfr]
+;
+
+
 ID  :   (LETTER | UNDERSCORE) LETTER* DIGIT* UNDERSCORE* ;      // match identifiers
 INT :   ('-')? DIGIT+ ;         // match integers
-FLOAT:  ('-')? DIGIT+
+FLOAT:  ('-')? DIGIT
 	(
 		'.' DIGIT+
 		| ('.' DIGIT+)? ('E' | 'e') ('-')? DIGIT+
@@ -192,7 +198,7 @@ FLOAT:  ('-')? DIGIT+
 ;
 BOOL: 'true' | 'false' ;
 
-STRING: '"' .*? '"';
+STRING: '"' (~["\r\n] | ESCAPE_CHAR)* '"';
 
 NEWLINE:'\r'? '\n' ;     // return newlines to parser (end-statement signal)
 
@@ -203,5 +209,5 @@ MULTILINE_COMMENT: '/''*' .*? '*''/' -> skip;
 /*-------------------------------------------------------------------------------------
 Error Characters*/
 ERROR_CHAR: .;
-ILLEGAL_ESCAPE:.;
-UNCLOSE_STRING:.;
+ILLEGAL_ESCAPE: '\\' ~[0btnfr];
+UNCLOSE_STRING: .;

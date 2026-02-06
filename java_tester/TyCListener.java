@@ -57,6 +57,16 @@ public interface TyCListener extends ParseTreeListener {
 	 */
 	void exitParam_list(TyCParser.Param_listContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link TyCParser#param}.
+	 * @param ctx the parse tree
+	 */
+	void enterParam(TyCParser.ParamContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TyCParser#param}.
+	 * @param ctx the parse tree
+	 */
+	void exitParam(TyCParser.ParamContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link TyCParser#param_type}.
 	 * @param ctx the parse tree
 	 */

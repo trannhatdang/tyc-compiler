@@ -79,21 +79,32 @@ def test_complex_expression():
     tokenizer = Tokenizer("auto x = 5 + 3 * 2;")
     assert tokenizer.get_tokens_as_string() == "auto,x,=,5,+,3,*,2,;,<EOF>"
 
+###############Characters#################
+def test_outside_extended_ascii():
+    tokenizer = Tokenizer("迷")
+    assert tokenizer.get_tokens_as_string() == "Error Token 迷"
+
+###############Literals#################
+
+def test_floating_point():
+    tokenizer = Tokenizer("1.0e-35")
+    assert tokenizer.get_tokens_as_string() == "1.0e-35,<EOF>"
+
 ###############Expressions#################
 
 def test_func_1():
     tokenizer = Tokenizer("a+3();")
-    assert tokenizer.get_tokens_as_string() == "a,3,(,),<EOF>"
+    assert tokenizer.get_tokens_as_string() == "a,+,3,(,),;,<EOF>"
 
 def test_func_2():
     tokenizer = Tokenizer("(a+lmao)();")
-    assert tokenizer.get_tokens_as_string() == "(,a,+,lmao,),(,),<EOF>"
+    assert tokenizer.get_tokens_as_string() == "(,a,+,lmao,),(,),;,<EOF>"
 
 def test_ass_1():
     tokenizer = Tokenizer("a=b=c;")
-    assert tokenizer.get_tokens_as_string() == "a,=,b,=,c,<EOF>"
+    assert tokenizer.get_tokens_as_string() == "a,=,b,=,c,;,<EOF>"
 
 def test_ass_2():
     tokenizer = Tokenizer("a+b=c;")
-    assert tokenizer.get_tokens_as_string() == "a,+,b,=,c,<EOF>"
+    assert tokenizer.get_tokens_as_string() == "a,+,b,=,c,;,<EOF>"
 

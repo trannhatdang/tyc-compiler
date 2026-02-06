@@ -44,7 +44,8 @@ prog_stat: func_decl | struct_decl;
 /*------------------------------------------------------------------------------------
 Function Declaration*/
 
-func_decl: return_type ID '(' param_list ')' '{' stat_list '}' ;
+func_decl: return_type ID '(' param_list ')' '{' stat_list '}' 
+	| ID '(' param_list ')' '{' stat_list '}';
 param_list: param param_list | param | ;
 param: param_type ID; 
 param_type: var_type;
@@ -53,9 +54,8 @@ return_type: param_type | VOID_TYPE;
 /*------------------------------------------------------------------------------------
 Struct Declaration*/
 struct_decl: STRUCT ID
-	| STRUCT ID '=' '{' var_decl_list '}' ';'
+	| STRUCT ID '{' var_decl_list '}' ';'
 ;
-/*dsgds*/
 
 /*------------------------------------------------------------------------------------
 Statement*/
@@ -109,26 +109,10 @@ Expression*/
 
 lvalue: ID | INT | FLOAT | STRING | BOOL;
 
-/*
-expr: assign_expr
-	| expr OR_OP expr
-	| expr AND_OP expr
-	| expr (EQ_OP | NEQ_OP) expr
-	| expr (LESS_OP | LEQ_OP | GREAT_OP | GEQ_OP) expr
-	| expr (ADD_OP | MIN_OP) expr
-	| expr (MULT_OP | DIV_OP | MOD_OP) expr
-	| un_op expr
-	| pre_op expr
-	| expr post_op
-	| expr '(' arg_list ')'
-	| expr '.' ID
-	| lvalue
-;*/
-
 expr: '(' expr ')'
 	| lvalue
 	| expr '.' ID
-	| expr post_op 
+	| expr post_op
 	| expr '(' arg_list ')'
 	| pre_op expr
 	| un_op expr
@@ -218,6 +202,7 @@ MEMACC_OP: '.';
 
 /*------------------------------------------------------------------------------------
 Seperators*/
+
 LROUND_BRACK: '(';
 RROUND_BRACK: ')';
 LSQUARE_BRACK: '[';
@@ -231,6 +216,7 @@ COLON: ':';
 
 /*------------------------------------------------------------------------------------
 Common Lexer Rules*/
+
 fragment
 LETTER: [a-zA-Z];
 
@@ -248,7 +234,7 @@ CHAR: LETTER | DIGIT | UNDERSCORE;
 
 ID  :   (LETTER | UNDERSCORE) CHAR* ;      // match identifiers
 INT :   ('-')? DIGIT+ ;         // match integers
-FLOAT:  ('-')? DIGIT
+FLOAT:  ('-')? DIGIT+
 	(
 		'.' DIGIT+
 		| ('.' DIGIT+)? ('E' | 'e') ('-')? DIGIT+
@@ -268,6 +254,7 @@ MULTILINE_COMMENT: '/''*' .*? '*''/' -> skip;
 
 /*-------------------------------------------------------------------------------------
 Error Characters*/
+
 ILLEGAL_ESCAPE: '\\' ~[0btnfr];
 UNCLOSE_STRING: '"' .*? ;
 ERROR_CHAR: .;

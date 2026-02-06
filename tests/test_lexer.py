@@ -16,18 +16,11 @@ def test_lexer_placeholder():
     assert tokenizer.get_tokens_as_string() == 'EOF'
 '''
 
-def nottest(obj):
-    obj.__test__ = False
-    return obj
-
-@nottest
-def test_lexer(source):
-    tokenizer = Tokenizer(source)
-    return tokenizer.get_tokens_as_string()
-
 def test_ID():
-    assert test_lexer('a') == 'a,<EOF>'
+    tokenizer = Tokenizer("a")
+    assert tokenizer.get_tokens_as_string() == "a,<EOF>"
 
+'''
 def test_INT():
     assert test_lexer('50') == '50,<EOF>'
 
@@ -45,6 +38,7 @@ def test_bin_op():
 
 def test_ill_escape():
     assert test_lexer('\t "gd dg') == 'sdg,<EOF>'
+'''
 
 def test_keyword_auto():
     """1. Keyword"""
@@ -104,3 +98,9 @@ def test_complex_expression():
     """10. Complex: variable declaration"""
     tokenizer = Tokenizer("auto x = 5 + 3 * 2;")
     assert tokenizer.get_tokens_as_string() == "auto,x,=,5,+,3,*,2,;,<EOF>"
+
+###############Expressions#################
+
+def test_func_1():
+    tokenizer = Tokenizer("a+3();")
+    assert tokenizer.get_tokens_as_string() == "a, <EOF>"

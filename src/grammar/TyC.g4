@@ -112,16 +112,16 @@ expr: assign_expr
 	| pre_op expr
 	| expr post_op
 	| expr '.' ID
-	| expr '(' arg_list ')'
+	| func_term '(' arg_list ')'
 	| lvalue
 ;
 
 assign_expr: ID '=' expr ;
 
 term: term ('*' | '/') term
-	| un_op expr
-	| pre_op expr
-	| lvalue;
+	| mem_acc_expr
+	| lvalue
+;
 
 inc_expr: '++'ID | ID'++' ;
 dec_expr: '--'ID | ID'--' ;
@@ -132,8 +132,12 @@ pre_expr: pre_op pre_term ;
 pre_term: ;
 post_expr: post_term post_op ;
 post_term: ;
-func_expr: func_term '(' arg_list ')' ;
-func_term: ;
+
+func_term: 
+	| term ('+' | '-') term
+	| ID
+;
+
 mem_acc_expr: mem_acc_term '.' ID ;
 mem_acc_term: ;
 

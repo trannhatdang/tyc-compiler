@@ -238,7 +238,7 @@ FLOAT:  ('-')? DIGIT+
 		'.' DIGIT*
 		| ('.' DIGIT*)? ('E' | 'e') ('-' | '+')? DIGIT+
 	)
-	| ('-') '.' DIGIT+ (('E' | 'e') ('-' | '+') DIGIT+)?
+	| ('-')? '.' DIGIT+ (('E' | 'e') ('-' | '+') DIGIT+)?
 ;
 BOOL: 'true' | 'false' ;
 

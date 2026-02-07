@@ -138,12 +138,60 @@ def test_floating_point_dot_1():
     assert tokenizer.get_tokens_as_string() == "1.035,<EOF>"
 
 def test_floating_point_dot_2():
+    tokenizer = Tokenizer("-1.035")
+    assert tokenizer.get_tokens_as_string() == "-1.035,<EOF>"
+
+def test_floating_point_dot_3():
     tokenizer = Tokenizer(".035")
     assert tokenizer.get_tokens_as_string() == ".035,<EOF>"
 
-def test_floating_point_dot_3():
+def test_floating_point_dot_4():
+    tokenizer = Tokenizer("-.035")
+    assert tokenizer.get_tokens_as_string() == "-.035,<EOF>"
+
+def test_floating_point_dot_5():
     tokenizer = Tokenizer("1.")
     assert tokenizer.get_tokens_as_string() == "1.,<EOF>"
+
+def test_floating_point_dot_6():
+    tokenizer = Tokenizer("-1.")
+    assert tokenizer.get_tokens_as_string() == "-1.,<EOF>"
+
+def test_floating_point_exp_1():
+    tokenizer = Tokenizer("1e53")
+    assert tokenizer.get_tokens_as_string() == "1e53,<EOF>"
+
+def test_floating_point_exp_2():
+    tokenizer = Tokenizer("1e-53")
+    assert tokenizer.get_tokens_as_string() == "1e-53,<EOF>"
+
+def test_floating_point_exp_3():
+    tokenizer = Tokenizer("-1e53")
+    assert tokenizer.get_tokens_as_string() == "-1e53,<EOF>"
+
+def test_floating_point_exp_4():
+    tokenizer = Tokenizer("-1e-53")
+    assert tokenizer.get_tokens_as_string() == "-1e-53,<EOF>"
+
+def test_floating_point_exp_5():
+    tokenizer = Tokenizer("1E53")
+    assert tokenizer.get_tokens_as_string() == "1E53,<EOF>"
+
+def test_floating_point_exp_6():
+    tokenizer = Tokenizer("1E-53")
+    assert tokenizer.get_tokens_as_string() == "1E-53,<EOF>"
+
+def test_floating_point_exp_7():
+    tokenizer = Tokenizer("-1E53")
+    assert tokenizer.get_tokens_as_string() == "-1E53,<EOF>"
+
+def test_floating_point_exp_8():
+    tokenizer = Tokenizer("-1E-53")
+    assert tokenizer.get_tokens_as_string() == "-1E-53,<EOF>"
+
+def test_floating_point_exp_3():
+    tokenizer = Tokenizer("E-53")
+    assert tokenizer.get_tokens_as_string() == "E,-53,<EOF>"
 
 def test_floating_point_dot_exp_1():
     tokenizer = Tokenizer("1.e53")
@@ -176,26 +224,6 @@ def test_floating_point_dot_exp_7():
 def test_floating_point_dot_exp_8():
     tokenizer = Tokenizer("-1.E-53")
     assert tokenizer.get_tokens_as_string() == "-1.E-53,<EOF>"
-
-def test_floating_point_exp_1():
-    tokenizer = Tokenizer("1e53")
-    assert tokenizer.get_tokens_as_string() == "1e53,<EOF>"
-
-def test_floating_point_exp_2():
-    tokenizer = Tokenizer("1e-53")
-    assert tokenizer.get_tokens_as_string() == "1e-53,<EOF>"
-
-def test_floating_point_exp_3():
-    tokenizer = Tokenizer("1E53")
-    assert tokenizer.get_tokens_as_string() == "1E53,<EOF>"
-
-def test_floating_point_exp_4():
-    tokenizer = Tokenizer("1E-53")
-    assert tokenizer.get_tokens_as_string() == "1E-53,<EOF>"
-
-def test_floating_point_exp_3():
-    tokenizer = Tokenizer("E-53")
-    assert tokenizer.get_tokens_as_string() == "E,-53,<EOF>"
 
 def test_integer_1():
     tokenizer = Tokenizer("1.E-53")

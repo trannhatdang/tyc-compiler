@@ -16,82 +16,107 @@ def test_lexer_placeholder():
     assert tokenizer.get_tokens_as_string() == 'EOF'
 '''
 
+def test_empty_1():
+    tokenizer = Tokenizer("")
+    assert tokenizer.get_tokens_as_string() == "<EOF>"
+
+def test_empty_2():
+    tokenizer = Tokenizer("\t\t\t\t\t\t\t\t\t\t\t")
+    assert tokenizer.get_tokens_as_string() == "<EOF>"
+
+def test_empty_3():
+    tokenizer = Tokenizer("\n\n\n\n\n\n\n\n\n\n\n")
+    assert tokenizer.get_tokens_as_string() == "<EOF>"
+
+def test_empty_4():
+    tokenizer = Tokenizer("                                                         ")
+    assert tokenizer.get_tokens_as_string() == "<EOF>"
 
 ###############Identifiers#################
 
-def test_ID_1():
+def test_ID_only_words_1():
     tokenizer = Tokenizer("a")
     assert tokenizer.get_tokens_as_string() == "a,<EOF>"
 
-def test_ID_2():
-    tokenizer = Tokenizer("a")
-    assert tokenizer.get_tokens_as_string() == "a,<EOF>"
+def test_ID_only_words_2():
+    tokenizer = Tokenizer("asdgsdgsdgsdg")
+    assert tokenizer.get_tokens_as_string() == "asdgsdgsdgsdg,<EOF>"
 
-def test_ID_3():
-    tokenizer = Tokenizer("a")
-    assert tokenizer.get_tokens_as_string() == "a,<EOF>"
+def test_ID_only_words_3():
+    tokenizer = Tokenizer("A")
+    assert tokenizer.get_tokens_as_string() == "A,<EOF>"
 
-def test_ID_4():
-    tokenizer = Tokenizer("a")
-    assert tokenizer.get_tokens_as_string() == "a,<EOF>"
+def test_ID_only_words_4():
+    tokenizer = Tokenizer("AASDGLJSDLKJGIORWJEOIJW")
+    assert tokenizer.get_tokens_as_string() == "AASDGLJSDLKJGIORWJEOIJW,<EOF>"
 
-def test_keyword_auto():
-    """1. Keyword"""
-    tokenizer = Tokenizer("auto")
-    assert tokenizer.get_tokens_as_string() == "auto,<EOF>"
+def test_ID_only_words_5():
+    tokenizer = Tokenizer("AAsdgLJSwgfJGgsgJEOIJW")
+    assert tokenizer.get_tokens_as_string() == "AAsdgLJSwgfJGgsgJEOIJW,<EOF>"
 
-def test_operator_assign():
-    """2. Operator"""
-    tokenizer = Tokenizer("=")
-    assert tokenizer.get_tokens_as_string() == "=,<EOF>"
+def test_ID_only_words_6():
+    tokenizer = Tokenizer("sdgLJSwgfJGgsgJEOIJW")
+    assert tokenizer.get_tokens_as_string() == "sdgLJSwgfJGgsgJEOIJW,<EOF>"
 
+def test_ID_only_underscore_1():
+    tokenizer = Tokenizer("_")
+    assert tokenizer.get_tokens_as_string() == "_,<EOF>"
 
-def test_separator_semi():
-    """3. Separator"""
-    tokenizer = Tokenizer(";")
-    assert tokenizer.get_tokens_as_string() == ";,<EOF>"
+def test_ID_only_underscore_2():
+    tokenizer = Tokenizer("__")
+    assert tokenizer.get_tokens_as_string() == "__,<EOF>"
 
+def test_ID_only_underscore_3():
+    tokenizer = Tokenizer("____")
+    assert tokenizer.get_tokens_as_string() == "____,<EOF>"
 
-def test_integer_single_digit():
-    """4. Integer literal"""
-    tokenizer = Tokenizer("5")
-    assert tokenizer.get_tokens_as_string() == "5,<EOF>"
+def test_ID_words_number_1():
+    tokenizer = Tokenizer("asdg214")
+    assert tokenizer.get_tokens_as_string() == "asdg214,<EOF>"
 
+def test_ID_words_number_2():
+    tokenizer = Tokenizer("asdg214sdg")
+    assert tokenizer.get_tokens_as_string() == "asdg214sdg,<EOF>"
 
-def test_float_decimal():
-    """5. Float literal"""
-    tokenizer = Tokenizer("3.14")
-    assert tokenizer.get_tokens_as_string() == "3.14,<EOF>"
+def test_ID_words_number_3():
+    tokenizer = Tokenizer("asdg214sdg231")
+    assert tokenizer.get_tokens_as_string() == "asdg214sdg231,<EOF>"
 
+def test_ID_words_number_4():
+    tokenizer = Tokenizer("asdg231")
+    assert tokenizer.get_tokens_as_string() == "asdg231,<EOF>"
 
-def test_string_simple():
-    """6. String literal"""
-    tokenizer = Tokenizer('"hello"')
-    assert tokenizer.get_tokens_as_string() == "hello,<EOF>"
+def test_ID_words_underscore_1():
+    tokenizer = Tokenizer("a_sdg")
+    assert tokenizer.get_tokens_as_string() == "a_sdg,<EOF>"
 
+def test_ID_words_underscore_2():
+    tokenizer = Tokenizer("_sdg")
+    assert tokenizer.get_tokens_as_string() == "_sdg,<EOF>"
 
-def test_identifier_simple():
-    """7. Identifier"""
-    tokenizer = Tokenizer("x")
-    assert tokenizer.get_tokens_as_string() == "x,<EOF>"
+def test_ID_words_underscore_3():
+    tokenizer = Tokenizer("sdg_")
+    assert tokenizer.get_tokens_as_string() == "sdg_,<EOF>"
 
+def test_ID_words_underscore_4():
+    tokenizer = Tokenizer("_sdgh_")
+    assert tokenizer.get_tokens_as_string() == "_sdgh_,<EOF>"
 
-def test_line_comment():
-    """8. Line comment"""
-    tokenizer = Tokenizer("// This is a comment")
-    assert tokenizer.get_tokens_as_string() == "<EOF>"
+def test_ID_words_underscore_number_1():
+    tokenizer = Tokenizer("a_1")
+    assert tokenizer.get_tokens_as_string() == "a_1,<EOF>"
 
+def test_ID_words_underscore_number_2():
+    tokenizer = Tokenizer("a1_")
+    assert tokenizer.get_tokens_as_string() == "a1_,<EOF>"
 
-def test_integer_in_expression():
-    """9. Mixed: integers and operator"""
-    tokenizer = Tokenizer("5+10")
-    assert tokenizer.get_tokens_as_string() == "5,+,10,<EOF>"
+def test_ID_words_underscore_number_3():
+    tokenizer = Tokenizer("_a1")
+    assert tokenizer.get_tokens_as_string() == "_a1,<EOF>"
 
-
-def test_complex_expression():
-    """10. Complex: variable declaration"""
-    tokenizer = Tokenizer("auto x = 5 + 3 * 2;")
-    assert tokenizer.get_tokens_as_string() == "auto,x,=,5,+,3,*,2,;,<EOF>"
+def test_ID_words_underscore_number_4():
+    tokenizer = Tokenizer("_1a")
+    assert tokenizer.get_tokens_as_string() == "_1a,<EOF>"
 
 ###############Characters#################
 
@@ -255,79 +280,79 @@ def test_err_floating_point_4():
 
 def test_err_floating_point_dot_exp_1():
     tokenizer = Tokenizer(".e53")
-    assert tokenizer.get_tokens_as_string() == ".e53,<EOF>"
+    assert tokenizer.get_tokens_as_string() == ".,e53,<EOF>"
 
 def test_err_floating_point_dot_exp_2():
     tokenizer = Tokenizer(".e-35")
-    assert tokenizer.get_tokens_as_string() == ".e-35,<EOF>"
+    assert tokenizer.get_tokens_as_string() == ".,e,-35,<EOF>"
 
 def test_err_floating_point_dot_exp_3():
     tokenizer = Tokenizer("-.e53")
-    assert tokenizer.get_tokens_as_string() == "-.e53,<EOF>"
+    assert tokenizer.get_tokens_as_string() == "-,.,e53,<EOF>"
 
 def test_err_floating_point_dot_exp_4():
     tokenizer = Tokenizer("-.e-35")
-    assert tokenizer.get_tokens_as_string() == "-.e-35,<EOF>"
+    assert tokenizer.get_tokens_as_string() == "-,.,e,-35,<EOF>"
 
 def test_err_floating_point_dot_exp_5():
     tokenizer = Tokenizer(".E53")
-    assert tokenizer.get_tokens_as_string() == ".E53,<EOF>"
+    assert tokenizer.get_tokens_as_string() == ".,E53,<EOF>"
 
 def test_err_floating_point_dot_exp_6():
     tokenizer = Tokenizer(".E-53")
-    assert tokenizer.get_tokens_as_string() == ".E-53,<EOF>"
+    assert tokenizer.get_tokens_as_string() == ".,E,-53,<EOF>"
 
 def test_err_floating_point_dot_exp_7():
     tokenizer = Tokenizer("-.E53")
-    assert tokenizer.get_tokens_as_string() == "-.E53,<EOF>"
+    assert tokenizer.get_tokens_as_string() == "-,.,E53,<EOF>"
 
 def test_err_floating_point_dot_exp_8():
     tokenizer = Tokenizer("-.E-53")
-    assert tokenizer.get_tokens_as_string() == "-.E-53,<EOF>"
+    assert tokenizer.get_tokens_as_string() == "-,.,E,-53,<EOF>"
 
 def test_integer_1():
-    tokenizer = Tokenizer("1.E-53")
-    assert tokenizer.get_tokens_as_string() == "1.E-53,<EOF>"
+    tokenizer = Tokenizer("10")
+    assert tokenizer.get_tokens_as_string() == "10,<EOF>"
 
-def test_integer_1():
-    tokenizer = Tokenizer("1.E-53")
-    assert tokenizer.get_tokens_as_string() == "1.E-53,<EOF>"
+def test_integer_2():
+    tokenizer = Tokenizer("035")
+    assert tokenizer.get_tokens_as_string() == "035,<EOF>"
 
-def test_integer_1():
-    tokenizer = Tokenizer("1.E-53")
-    assert tokenizer.get_tokens_as_string() == "1.E-53,<EOF>"
+def test_integer_3():
+    tokenizer = Tokenizer("350")
+    assert tokenizer.get_tokens_as_string() == "350,<EOF>"
 
-def test_integer_1():
-    tokenizer = Tokenizer("1.E-53")
-    assert tokenizer.get_tokens_as_string() == "1.E-53,<EOF>"
+def test_integer_4():
+    tokenizer = Tokenizer("000000000000000000025")
+    assert tokenizer.get_tokens_as_string() == "000000000000000000025,<EOF>"
 
-def test_integer_1():
-    tokenizer = Tokenizer("1.E-53")
-    assert tokenizer.get_tokens_as_string() == "1.E-53,<EOF>"
+def test_integer_5():
+    tokenizer = Tokenizer("250000000000000")
+    assert tokenizer.get_tokens_as_string() == "250000000000000,<EOF>"
 
-def test_integer_1():
-    tokenizer = Tokenizer("1.E-53")
-    assert tokenizer.get_tokens_as_string() == "1.E-53,<EOF>"
+def test_integer_6():
+    tokenizer = Tokenizer("2525252525252525")
+    assert tokenizer.get_tokens_as_string() == "2525252525252525,<EOF>"
 
-def test_integer_1():
-    tokenizer = Tokenizer("1.E-53")
-    assert tokenizer.get_tokens_as_string() == "1.E-53,<EOF>"
+def test_integer_7():
+    tokenizer = Tokenizer("0x35")
+    assert tokenizer.get_tokens_as_string() == "0,x35,<EOF>"
 
-def test_integer_1():
-    tokenizer = Tokenizer("1.E-53")
-    assert tokenizer.get_tokens_as_string() == "1.E-53,<EOF>"
+def test_integer_8():
+    tokenizer = Tokenizer("0b213521352")
+    assert tokenizer.get_tokens_as_string() == "0,b213521352,<EOF>"
 
-def test_integer_1():
-    tokenizer = Tokenizer("1.E-53")
-    assert tokenizer.get_tokens_as_string() == "1.E-53,<EOF>"
+def test_integer_9():
+    tokenizer = Tokenizer("00025000")
+    assert tokenizer.get_tokens_as_string() == "00025000,<EOF>"
 
-def test_integer_1():
-    tokenizer = Tokenizer("1.E-53")
-    assert tokenizer.get_tokens_as_string() == "1.E-53,<EOF>"
+def test_integer_10():
+    tokenizer = Tokenizer("0025000250025002500")
+    assert tokenizer.get_tokens_as_string() == "0025000250025002500,<EOF>"
 
-def test_integer_1():
-    tokenizer = Tokenizer("1.E-53")
-    assert tokenizer.get_tokens_as_string() == "1.E-53,<EOF>"
+def test_integer_11():
+    tokenizer = Tokenizer("0020530230620360230423")
+    assert tokenizer.get_tokens_as_string() == "0020530230620360230423,<EOF>"
 
 def test_string_1():
     tokenizer = Tokenizer("\"lmao\"")

@@ -597,7 +597,7 @@ class TyCBuilder:
 
     def test_gui(self, watch = False, ui = False, **kwargs):
         if not watch:
-            print(self.colors.yellow("Running GUI Test..."))
+            print(self.colors.yellow("Running Test with GUI..."))
             grammar_file = open(self.root_dir / "src" / "grammar" / "TyC.g4")
             java_grammar_file = open(self.root_dir / "java_tester" / "TyC.g4", "w")
 

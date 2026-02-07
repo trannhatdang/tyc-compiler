@@ -413,12 +413,40 @@ def test_string_unclosed_string_5():
 ###############Expressions#################
 
 def test_func_1():
-    tokenizer = Tokenizer("a+3();")
-    assert tokenizer.get_tokens_as_string() == "a,+,3,(,),;,<EOF>"
+    tokenizer = Tokenizer("lmao();")
+    assert tokenizer.get_tokens_as_string() == "lmao,(,),;,<EOF>"
 
 def test_func_2():
     tokenizer = Tokenizer("(a+lmao)();")
     assert tokenizer.get_tokens_as_string() == "(,a,+,lmao,),(,),;,<EOF>"
+
+def test_func_3():
+    tokenizer = Tokenizer("(a)();")
+    assert tokenizer.get_tokens_as_string() == "(,a,),(,),;,<EOF>"
+
+def test_func_4():
+    tokenizer = Tokenizer("(a-lmao)();")
+    assert tokenizer.get_tokens_as_string() == "(,a,-,lmao,),(,),;,<EOF>"
+
+def test_func_5():
+    tokenizer = Tokenizer("(a*lmao)();")
+    assert tokenizer.get_tokens_as_string() == "(,a,*,lmao,),(,),;,<EOF>"
+
+def test_func_6():
+    tokenizer = Tokenizer("(_3535)();")
+    assert tokenizer.get_tokens_as_string() == "(,_3535,),(,),;,<EOF>"
+
+def test_func_7():
+    tokenizer = Tokenizer("(_3535_)();")
+    assert tokenizer.get_tokens_as_string() == "(,_3535_,),(,),;,<EOF>"
+
+def test_func_8():
+    tokenizer = Tokenizer("(_asg34)();")
+    assert tokenizer.get_tokens_as_string() == "(,_asg34,),(,),;,<EOF>"
+
+def test_func_9():
+    tokenizer = Tokenizer("a+3();")
+    assert tokenizer.get_tokens_as_string() == "a,+,3,(,),;,<EOF>"
 
 def test_ass_1():
     tokenizer = Tokenizer("a=b=c;")
@@ -427,3 +455,23 @@ def test_ass_1():
 def test_ass_2():
     tokenizer = Tokenizer("a+b=c;")
     assert tokenizer.get_tokens_as_string() == "a,+,b,=,c,;,<EOF>"
+
+def test_ass_3():
+    tokenizer = Tokenizer("a=b=c=b=s=g=3=4;")
+    assert tokenizer.get_tokens_as_string() == "a,=,b,=,c,=,b,=,s,=,g,=,3,=,4,;,<EOF>"
+
+def test_ass_4():
+    tokenizer = Tokenizer("a+b+d+f=4;")
+    assert tokenizer.get_tokens_as_string() == "a,+,b,+,d,+,f,=,4,;,<EOF>"
+
+def test_ass_5():
+    tokenizer = Tokenizer("a+b+d+_sfdg=4;")
+    assert tokenizer.get_tokens_as_string() == "a,+,b,+,d,+,_sfdg,=,4,;,<EOF>"
+
+def test_ass_6():
+    tokenizer = Tokenizer("a+b+d=4;")
+    assert tokenizer.get_tokens_as_string() == "a,+,b,+,d,=,4,;,<EOF>"
+
+def test_ass_7():
+    tokenizer = Tokenizer("a+b+d=4;")
+    assert tokenizer.get_tokens_as_string() == "a,+,b,+,d,=,4,;,<EOF>"

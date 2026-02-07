@@ -242,7 +242,6 @@ FLOAT:  ('-')? DIGIT+
 ;
 BOOL: 'true' | 'false' ;
 
-
 STRING: STRINGLIT;
 
 STRINGLIT: '"' ( '\\' [0btnfr"'\\] | ~[\b\t\f\r\n\\"] )* '"';

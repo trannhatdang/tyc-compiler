@@ -390,6 +390,10 @@ def test_string_illegal_escape_5():
     tokenizer = Tokenizer("\"\\     \"")
     assert tokenizer.get_tokens_as_string() == "Illegal Escape In String: \"\\     \""
 
+def test_string_illegal_escape_6():
+    tokenizer = Tokenizer("\"asdgsdg \\a asdgasdg     \"")
+    assert tokenizer.get_tokens_as_string() == "Illegal Escape In String: \"\\     \""
+
 def test_string_unclosed_string_1():
     tokenizer = Tokenizer("\"")
     assert tokenizer.get_tokens_as_string() == "Unclosed String: \""
@@ -410,9 +414,10 @@ def test_string_unclosed_string_5():
     tokenizer = Tokenizer("\"lmao\"\"\"\"   ")
     assert tokenizer.get_tokens_as_string() == "lmao,,Unclosed String: \"   "
 
-def test_string_both_err():
-    tokenizer = Tokenizer("\"\g lmao\"\"\"\"   ")
-    assert tokenizer.get_tokens_as_string() == "Illegal Escape In String: \"\g lmao\""
+def test_string_both_err_1():
+    tokenizer = Tokenizer("\" \g lmao   ")
+    assert tokenizer.get_tokens_as_string() == "Illegal Escape In String: \g"
+
 
 ###############Expressions#################
 

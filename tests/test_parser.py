@@ -76,7 +76,7 @@ def test_exp_1():
 
 def test_exp_2():
     source = "void main() { a + b = c }"
-    assert Parser(source).parse() == "Error on line 1 col 19: ="
+    assert Parser(source).parse() == "Error on line 1 col 20: ="
 
 def test_exp_3():
     source = "void main() { a = b - c; }"
@@ -88,20 +88,42 @@ def test_struct_1():
     assert Parser(source).parse() == "Error on line 1 col 26: <EOF>"
 
 def test_struct_2():
-    source = "struct lmao = {int a;int b;}"
+    source = "struct lmao = {int a;int b;};"
     assert Parser(source).parse() == "Error on line 1 col 12: ="
 
 def test_struct_3():
     source = "struct lmao {int a;int b;};"
     assert Parser(source).parse() == "success"
 
+def test_struct_4():
+    source = "void main() { lmao lm = {a, b}; }"
+    assert Parser(source).parse() == "success"
+
+def test_struct_5():
+    source = "void main() { lm = {a, b}; }"
+    assert Parser(source).parse() == "success"
+
+def test_struct_6():
+    source = "void main() { lm = {a(), b+c}; }"
+    assert Parser(source).parse() == "success"
+
+def test_struct_7():
+    source = "void main() { lm = {_abc.ld, b+c()}; }"
+    assert Parser(source).parse() == "success"
+
+def test_struct_8():
+    source = "void main() { lm = {_abc.ld, b+c(), {3, 5}}; }"
+    assert Parser(source).parse() == "success"
+
+def test_struct_9():
+    source = "void main() { lm = {_abc.ld, b+c(), {3, 5}}; bernie bern = {{{{3}}}}; }"
+    assert Parser(source).parse() == "success"
+
+def test_struct_10():
+    source = "void main() { lm = {_abc.ld, b+c(), {3, 5}}; bernie bern = {{{{3}}}; }"
+    assert Parser(source).parse() == "Error on line 1 col 67: ;"
+
 ###############If Else#################
 def test_if():
     source = "void main() {if(pong_tin) { lmao(); }}"
     assert Parser(source).parse() == "success"
-
-
-
-
-
-

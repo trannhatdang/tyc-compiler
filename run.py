@@ -499,7 +499,7 @@ class TyCBuilder:
 
         self.watch(target = self.test_lexer, files = watch_files, watch_kwargs = watch_kwargs)
 
-    def test_parser(self, check = True, watch = False, ui = False, **kwargs):
+    def test_parser(self, check = True, watch = False, ui = False, rebuild_grammar = True, **kwargs):
         """Run parser tests."""
         grammar_files = list((self.root_dir / "src" / "grammar").glob("*.g4"))
 
@@ -508,7 +508,8 @@ class TyCBuilder:
                 print(self.colors.red("No grammar files found in src/grammar/"))
                 sys.exit(1)
 
-            self.build_grammar()
+            if rebuild_grammar:
+                self.build_grammar()
 
             print(self.colors.yellow("Running parser tests..."))
             parser_report_dir = self.report_dir / "parser"
@@ -656,10 +657,13 @@ class TyCBuilder:
         self.watch(target = self.test_gui, files = watch_files, watch_kwargs = watch_kwargs, constant_check = False, force_close = True)
 
     def test_all(self, watch = False, ui = False, parts = ['1', '2', '3', '4'], **kwargs):
+        if parts == None:
+            parts = ['1', '2', '3', '4']
+
         if not watch:
             if '1' in parts:
                 self.test_lexer()
-                self.test_parser()
+                self.test_parser(rebuild_grammar = False)
 
             if '2' in parts:
                 self.test_ast()
@@ -675,10 +679,12 @@ class TyCBuilder:
 
         if '1' in parts:
             watch_files.extend(grammar_files)
+            watch_files.append("tests/test_lexer.py")
+            watch_files.append("tests/test_parser.py")
 
-        watch_kwargs = {'watch': False, 'ui': ui}
+        watch_kwargs = {'watch': False, 'ui': ui, 'parts': parts}
 
-        self.watch(target = test_all, files = watch_files, watch_kwargs = watch_kwargs)
+        self.watch(target = self.test_all, files = watch_files, watch_kwargs = watch_kwargs)
 
 def main():
     """Main entry point."""

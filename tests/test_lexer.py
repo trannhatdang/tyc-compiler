@@ -371,7 +371,7 @@ def test_string_4():
     assert tokenizer.get_tokens_as_string() == "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum vel lorem urna. Sed pretium et leo vel lobortis. Quisque in neque vehicula, scelerisque nisi in, tempus nunc. Phasellus et leo dolor. Donec lacinia dictum turpis sit amet sodales. Nunc iaculis viverra dolor at mollis. Mauris id nisi ligula. Quisque nec rutrum neque. Quisque volutpat quam id nisl dignissim, vel finibus elit cursus. Aliquam volutpat, eros quis imperdiet facilisis, nunc turpis molestie libero, non suscipit orci nulla ut augue. Etiam id lorem sed odio rhoncus euismod. Pellentesque id ultricies lectus, et bibendum diam. Quisque vel dui quis libero ultrices blandit. Morbi in eros ultrices, fermentum arcu vel, ornare eros.,<EOF>"
 
 def test_string_illegal_escape_1():
-    tokenizer = Tokenizer("\" \\   \"")
+    tokenizer = Tokenizer(" \" \\   \" ")
     assert tokenizer.get_tokens_as_string() == "Illegal Escape In String: \" \\   \""
 
 def test_string_illegal_escape_2():
@@ -409,6 +409,10 @@ def test_string_unclosed_string_4():
 def test_string_unclosed_string_5():
     tokenizer = Tokenizer("\"lmao\"\"\"\"   ")
     assert tokenizer.get_tokens_as_string() == "lmao,,Unclosed String: \"   "
+
+def test_string_both_err():
+    tokenizer = Tokenizer("\"\g lmao\"\"\"\"   ")
+    assert tokenizer.get_tokens_as_string() == "Illegal Escape In String: \"\g lmao\""
 
 ###############Expressions#################
 
@@ -472,9 +476,25 @@ def test_ass_6():
     tokenizer = Tokenizer("a=4+35=sg;")
     assert tokenizer.get_tokens_as_string() == "a,=,4,+,35,=,sg,;,<EOF>"
 
-def test_add():
+def test_add_1():
     tokenizer = Tokenizer("3+5")
     assert tokenizer.get_tokens_as_string() == "3,+,5,<EOF>"
+
+def test_add_2():
+    tokenizer = Tokenizer("a+b")
+    assert tokenizer.get_tokens_as_string() == "a,+,b,<EOF>"
+
+def test_add_3():
+    tokenizer = Tokenizer("a++b")
+    assert tokenizer.get_tokens_as_string() == "a,++,b,<EOF>"
+
+def test_add_4():
+    tokenizer = Tokenizer("a+4")
+    assert tokenizer.get_tokens_as_string() == "a,+,4,<EOF>"
+
+def test_add_4():
+    tokenizer = Tokenizer("a+4\t")
+    assert tokenizer.get_tokens_as_string() == "a,+,4,<EOF>"
 
 def test_min_1():
     tokenizer = Tokenizer("3-5")
@@ -527,4 +547,115 @@ def test_great():
 def test_geq():
     tokenizer = Tokenizer("3>=5")
     assert tokenizer.get_tokens_as_string() == "3,>=,5,<EOF>"
+
+def test_mem_acc():
+    tokenizer = Tokenizer("mindy.high")
+    assert tokenizer.get_tokens_as_string() == "mindy,.,high,<EOF>"
+
+def test_inc_1():
+    tokenizer = Tokenizer("++a")
+    assert tokenizer.get_tokens_as_string() == "++,a,<EOF>"
+
+def test_inc_2():
+    tokenizer = Tokenizer("a++")
+    assert tokenizer.get_tokens_as_string() == "a,++,<EOF>"
+
+def test_dec_1():
+    tokenizer = Tokenizer("--a")
+    assert tokenizer.get_tokens_as_string() == "--,a,<EOF>"
+
+def test_dec_2():
+    tokenizer = Tokenizer("a--")
+    assert tokenizer.get_tokens_as_string() == "a,--,<EOF>"
+
+###############Seperators#################
+
+def test_round_brack():
+    tokenizer = Tokenizer("()")
+    assert tokenizer.get_tokens_as_string() == "(,),<EOF>"
+
+def test_square_brack():
+    tokenizer = Tokenizer("[]")
+    assert tokenizer.get_tokens_as_string() == "[,],<EOF>"
+
+def test_curly_brack():
+    tokenizer = Tokenizer("{}")
+    assert tokenizer.get_tokens_as_string() == "{,},<EOF>"
+
+def test_curly_brack_2():
+    tokenizer = Tokenizer("Point p = {10, 20}")
+    assert tokenizer.get_tokens_as_string() == "Point,p,=,{,10,,,20,},<EOF>"
+
+def test_curly_brack_3():
+    tokenizer = Tokenizer("Point p = {{{{{}}}}}")
+    assert tokenizer.get_tokens_as_string() == "Point,p,=,{,{,{,{,{,},},},},},<EOF>"
+
+def test_colon_semicolon_comma():
+    tokenizer = Tokenizer(";,:")
+    assert tokenizer.get_tokens_as_string() == ";,,,:,<EOF>"
+
+###############Keywords#################
+
+def test_keyword_1():
+    tokenizer = Tokenizer("int a")
+    assert tokenizer.get_tokens_as_string() == "int,a,<EOF>"
+
+def test_keyword_2():
+    tokenizer = Tokenizer("string b")
+    assert tokenizer.get_tokens_as_string() == "string,b,<EOF>"
+
+def test_keyword_3():
+    tokenizer = Tokenizer("float c")
+    assert tokenizer.get_tokens_as_string() == "float,c,<EOF>"
+
+def test_keyword_4():
+    tokenizer = Tokenizer("lmao d")
+    assert tokenizer.get_tokens_as_string() == "lmao,d,<EOF>"
+
+def test_keyword_5():
+    tokenizer = Tokenizer("auto d = 3.5")
+    assert tokenizer.get_tokens_as_string() == "auto,d,=,3.5,<EOF>"
+
+def test_keyword_6():
+    tokenizer = Tokenizer("break;")
+    assert tokenizer.get_tokens_as_string() == "break,;,<EOF>"
+
+def test_keyword_7():
+    tokenizer = Tokenizer("case true:")
+    assert tokenizer.get_tokens_as_string() == "case,true,:,<EOF>"
+
+def test_keyword_8():
+    tokenizer = Tokenizer("continue;")
+    assert tokenizer.get_tokens_as_string() == "continue,;,<EOF>"
+
+def test_keyword_9():
+    tokenizer = Tokenizer("if(){}else{};")
+    assert tokenizer.get_tokens_as_string() == "if,(,),{,},else,{,},;,<EOF>"
+
+def test_keyword_10():
+    tokenizer = Tokenizer("return;")
+    assert tokenizer.get_tokens_as_string() == "return,;,<EOF>"
+
+def test_keyword_11():
+    tokenizer = Tokenizer("struct Point;")
+    assert tokenizer.get_tokens_as_string() == "struct,Point,;,<EOF>"
+
+def test_keyword_12():
+    tokenizer = Tokenizer("switch();")
+    assert tokenizer.get_tokens_as_string() == "switch,(,),;,<EOF>"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

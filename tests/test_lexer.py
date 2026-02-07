@@ -469,9 +469,5 @@ def test_ass_5():
     assert tokenizer.get_tokens_as_string() == "a,+,b,+,d,+,_sfdg,=,4,;,<EOF>"
 
 def test_ass_6():
-    tokenizer = Tokenizer("a+b+d=4;")
-    assert tokenizer.get_tokens_as_string() == "a,+,b,+,d,=,4,;,<EOF>"
-
-def test_ass_7():
-    tokenizer = Tokenizer("a+b+d=4;")
-    assert tokenizer.get_tokens_as_string() == "a,+,b,+,d,=,4,;,<EOF>"
+    tokenizer = Tokenizer("a=4+35=sg;")
+    assert tokenizer.get_tokens_as_string() == "a,=,4,+,35,=,sg,;,<EOF>"

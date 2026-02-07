@@ -230,21 +230,20 @@ fragment
 ESCAPE_CHAR: '\\' [0btnfr];
 
 fragment
-CHAR: LETTER | DIGIT | UNDERSCORE;
+CHAR: ESCAPE_CHAR | .;
 
-ID  :   (LETTER | UNDERSCORE) CHAR* ;      // match identifiers
+ID  :   (LETTER | UNDERSCORE) (LETTER | DIGIT | UNDERSCORE)* ;      // match identifiers
 INT :   ('-')? DIGIT+ ;         // match integers
 FLOAT:  ('-')? DIGIT+
 	(
-		'.' DIGIT+
-		| ('.' DIGIT+)? ('E' | 'e') ('-')? DIGIT+
+		'.' DIGIT*
+		| ('.' DIGIT*)? ('E' | 'e') ('-' | '+')? DIGIT+
 	)
+	| ('-') '.' DIGIT+ (('E' | 'e') ('-' | '+') DIGIT+)?
 ;
 BOOL: 'true' | 'false' ;
 
-STRING: STRINGLIT;
-
-STRINGLIT: '"' .*? '"';
+STRING: '"' .*? '"';
 
 NEWLINE:'\r'? '\n' -> skip;     // return newlines to parser (end-statement signal)
 

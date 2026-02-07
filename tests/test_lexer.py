@@ -471,3 +471,56 @@ def test_ass_5():
 def test_ass_6():
     tokenizer = Tokenizer("a=4+35=sg;")
     assert tokenizer.get_tokens_as_string() == "a,=,4,+,35,=,sg,;,<EOF>"
+
+def test_add():
+    tokenizer = Tokenizer("3+5")
+    assert tokenizer.get_tokens_as_string() == "3,+,5,;,<EOF>"
+
+def test_min():
+    tokenizer = Tokenizer("3-5")
+    assert tokenizer.get_tokens_as_string() == "3,-,5,;,<EOF>"
+
+def test_mult():
+    tokenizer = Tokenizer("3*5")
+    assert tokenizer.get_tokens_as_string() == "3,*,5,;,<EOF>"
+
+def test_div():
+    tokenizer = Tokenizer("3/5")
+    assert tokenizer.get_tokens_as_string() == "3,/,5,;,<EOF>"
+
+def test_mod():
+    tokenizer = Tokenizer("3%5")
+    assert tokenizer.get_tokens_as_string() == "3,%,5,;,<EOF>"
+
+def test_or():
+    tokenizer = Tokenizer("3||5")
+    assert tokenizer.get_tokens_as_string() == "3,||,5,;,<EOF>"
+
+def test_and():
+    tokenizer = Tokenizer("3&&5")
+    assert tokenizer.get_tokens_as_string() == "3,&&,5,;,<EOF>"
+
+def test_eq():
+    tokenizer = Tokenizer("3==5")
+    assert tokenizer.get_tokens_as_string() == "3,==,5,;,<EOF>"
+
+def test_neq():
+    tokenizer = Tokenizer("3!=5")
+    assert tokenizer.get_tokens_as_string() == "3,!=,5,;,<EOF>"
+
+def test_less():
+    tokenizer = Tokenizer("3<5")
+    assert tokenizer.get_tokens_as_string() == "3,<,5,;,<EOF>"
+
+def test_leq():
+    tokenizer = Tokenizer("3<=5")
+    assert tokenizer.get_tokens_as_string() == "3,<=,5,;,<EOF>"
+
+def test_great():
+    tokenizer = Tokenizer("3>5")
+    assert tokenizer.get_tokens_as_string() == "3,>,5,;,<EOF>"
+
+def test_geq():
+    tokenizer = Tokenizer("3>=5")
+    assert tokenizer.get_tokens_as_string() == "3,>=,5,;,<EOF>"
+

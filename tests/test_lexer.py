@@ -166,20 +166,23 @@ def test_integer_1():
     tokenizer = Tokenizer("1.E-53")
     assert tokenizer.get_tokens_as_string() == "1.E-53,<EOF>"
 
-
 def test_string_1():
-    tokenizer = Tokenizer("\"\\0\\b\\t\\n\\f\\r\"")
-    assert tokenizer.get_tokens_as_string() == ",<EOF>"
+    tokenizer = Tokenizer("\" \\0\\b\\t\\n\\f\\r \"")
+    assert tokenizer.get_tokens_as_string() == " \\0\\b\\t\\n\\f\\r ,<EOF>"
 
-def test_string_2():
-    tokenizer = Tokenizer("\" \ \"")
-    assert tokenizer.get_tokens_as_string() == "Illegal Escape: \\g"
+def test_string_illegal_escape_1():
+    tokenizer = Tokenizer("\" \\   \"")
+    assert tokenizer.get_tokens_as_string() == "Illegal Escape In String: \" \\   \""
 
-def test_string_3():
+def test_string_illegal_escape_2():
+    tokenizer = Tokenizer("\" \\g lmao \"")
+    assert tokenizer.get_tokens_as_string() == "Illegal Escape In String: \" \\g lmao \""
+
+def test_string_4():
     tokenizer = Tokenizer("\"")
     assert tokenizer.get_tokens_as_string() == "Unclosed String: \""
 
-def test_string_4():
+def test_string_5():
     tokenizer = Tokenizer("\"\"\"")
     assert tokenizer.get_tokens_as_string() == ",Unclosed String: \""
 

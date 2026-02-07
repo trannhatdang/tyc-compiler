@@ -47,7 +47,7 @@ Function Declaration*/
 func_decl: return_type ID '(' param_list ')' '{' stat_list '}' 
 	| ID '(' param_list ')' '{' stat_list '}';
 param_list: param param_list | param | ;
-param: param_type ID; 
+param: param_type ID;
 param_type: var_type;
 return_type: param_type | VOID_TYPE;
 
@@ -90,7 +90,6 @@ switch_stat: SWITCH '(' expr ')' '{' case_expr_list default_case_expr '}'
 case_expr_list: case_expr case_expr_list | ;
 case_expr: CASE '(' expr ')' ':' stat_list
 	| CASE expr ':' stat_list
-
 ;
 
 default_case_expr: DEFAULT ':' stat_list | ;
@@ -243,7 +242,11 @@ FLOAT:  ('-')? DIGIT+
 ;
 BOOL: 'true' | 'false' ;
 
-STRING: '"' .*? '"';
+
+STRING: STRINGLIT;
+
+STRINGLIT: '"' ( '\\' [0btnfr"'\\] | ~[\b\t\f\r\n\\"] )* '"';
+
 
 NEWLINE:'\r'? '\n' -> skip;     // return newlines to parser (end-statement signal)
 
@@ -254,6 +257,6 @@ MULTILINE_COMMENT: '/''*' .*? '*''/' -> skip;
 /*-------------------------------------------------------------------------------------
 Error Characters*/
 
-ILLEGAL_ESCAPE: '\\' ~[0btnfr];
-UNCLOSE_STRING: '"' .*? ;
+ILLEGAL_ESCAPE: '"' ('\\' ~[btnfr"\\] | ~[\\"])* '"';
+UNCLOSE_STRING: '"' ( '\\' [btnfr"'\\] | ~[\b\t\f\r\n\\"] )*;
 ERROR_CHAR: .;

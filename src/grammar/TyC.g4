@@ -67,7 +67,7 @@ struct_var_type: INT_TYPE | STRING_TYPE | FLOAT_TYPE | ID;
 Statement*/
 stat_list: stat stat_list | ;
 stat: var_decl_stat | block_stat | if_stat | while_stat | for_stat | switch_stat 
-	| break_stat | continue_stat | return_stat | expr_stat;
+	| break_stat | continue_stat | return_stat | expr_stat | ';';
 
 var_decl_list: var_decl_stat var_decl_list | ;
 var_decl_stat: var_decl_expr ';' ;
@@ -91,8 +91,7 @@ for_stat: FOR '(' (var_decl_expr | assign_expr | ) ';' (expr | ) ';' (assign_exp
 	| FOR '(' (var_decl_expr | assign_expr | ) ';' (expr | ) ';' (assign_expr | inc_expr | dec_expr | ) ')' stat
 ;
 
-switch_stat: SWITCH '(' expr ')' '{' case_expr_list default_case_expr '}'
-	| SWITCH '(' expr ')' '{' case_expr_list '}';
+switch_stat: SWITCH '(' expr ')' '{' case_expr_list default_case_expr '}';
 
 case_expr_list: case_expr case_expr_list | ;
 case_expr: CASE '(' expr ')' ':' stat_list
@@ -141,12 +140,10 @@ dec_expr: '--'ID | ID'--' ;
 /*------------------------------------------------------------------------------------
 Argument*/
 
-arg_list: arg ',' args
+arg_list: arg ',' arg_list
 	| arg
 	|
 ;
-
-args: arg ',' args | arg;
 arg: expr;
 
 /*------------------------------------------------------------------------------------

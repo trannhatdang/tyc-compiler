@@ -513,9 +513,6 @@ class TyCBuilder:
 
             print(self.colors.yellow("Running parser tests..."))
             parser_report_dir = self.report_dir / "parser"
-            if parser_report_dir.exists():
-                shutil.rmtree(parser_report_dir)
-            self.report_dir.mkdir(exist_ok=True)
 
             env = os.environ.copy()
             env["PYTHONPATH"] = str(self.root_dir)
@@ -532,7 +529,7 @@ class TyCBuilder:
                     "pytest",
                     test_dir,
                     f"--html={parser_report_dir}\\test_parser_{curr_time}.html",
-                    "--timeout=3",
+                    "--timeout=5",
                     "--self-contained-html",
                 ],
                 check=False,

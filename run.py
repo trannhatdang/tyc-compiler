@@ -657,6 +657,7 @@ class TyCBuilder:
         self.watch(target = self.test_gui, files = watch_files, watch_kwargs = watch_kwargs, constant_check = False, force_close = True)
 
     def test_all(self, watch = False, ui = False, parts = ['1', '2', '3', '4'], **kwargs):
+        self.clear()
         if parts == None:
             parts = ['1', '2', '3', '4']
 

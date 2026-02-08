@@ -17,8 +17,6 @@ def emit(self):
 		raise IllegalEscape(result.text);
 	elif tk == self.ERROR_CHAR:
 		result = super().emit();
-		if '"' in result.text:
-			result.text = result.text[1:len(result.text)-1:];
 		raise ErrorToken(result.text); 
 	elif tk == self.STRING:
 		result = super().emit();
@@ -50,7 +48,7 @@ Function Declaration*/
 
 func_decl: return_type ID '(' param_list ')' '{' stat_list '}' 
 	| ID '(' param_list ')' '{' stat_list '}';
-param_list: param param_list | param | ;
+param_list: param ',' param_list | param | ;
 param: param_type ID;
 param_type: var_type;
 return_type: param_type | VOID_TYPE;
@@ -58,9 +56,12 @@ return_type: param_type | VOID_TYPE;
 /*------------------------------------------------------------------------------------
 Struct Declaration*/
 
-struct_decl: STRUCT ID
-	| STRUCT ID '{' var_decl_list '}' ';'
+struct_decl: STRUCT ID ';'
+	| STRUCT ID '{' struct_var_decl_list '}' ';'
 ;
+struct_var_decl_list: struct_var_decl_stat struct_var_decl_list |;
+struct_var_decl_stat: struct_var_type ID ';';
+struct_var_type: INT_TYPE | STRING_TYPE | FLOAT_TYPE | ID;
 
 /*------------------------------------------------------------------------------------
 Statement*/
@@ -86,8 +87,8 @@ if_stat: IF '(' expr ')' '{' stat_list '}'
 while_stat: WHILE '(' expr ')' '{' stat_list '}'
 	| WHILE '(' expr ')' stat;
 
-for_stat: FOR '(' (var_decl_expr | assign_expr | ) ';' (expr | ) ';' (assign_expr | inc_expr | dec_expr) ')' '{' stat_list '}'
-	| FOR '(' (var_decl_expr | assign_expr | ) ';' (expr | ) ';' (assign_expr | inc_expr | dec_expr) ')' stat
+for_stat: FOR '(' (var_decl_expr | assign_expr | ) ';' (expr | ) ';' (assign_expr | inc_expr | dec_expr | ) ')' '{' stat_list '}'
+	| FOR '(' (var_decl_expr | assign_expr | ) ';' (expr | ) ';' (assign_expr | inc_expr | dec_expr | ) ')' stat
 ;
 
 switch_stat: SWITCH '(' expr ')' '{' case_expr_list default_case_expr '}'
@@ -146,7 +147,7 @@ arg_list: arg ',' args
 ;
 
 args: arg ',' args | arg;
-arg: ID | INT | STRING | FLOAT | expr '.' ID;
+arg: expr;
 
 /*------------------------------------------------------------------------------------
 Operators*/
@@ -262,8 +263,11 @@ STRING: '"' CHAR*? '"';
 NEWLINE:'\r'? '\n' -> skip;     // return newlines to parser (end-statement signal)
 
 WS: [ \t\r\n]+ -> skip;
-COMMENT: '/''/' ~[\r\n]* -> skip;
-MULTILINE_COMMENT: '/''*' .*? '*''/' -> skip;
+COMMENT : '/''*' (COMMENT|.)*? '*''/' -> skip ;
+LINE_COMMENT  : '/''/' ~[\r\n]* -> skip ;
+
+/*COMMENT: '/''/' ~[\r\n]* -> skip;
+MULTILINE_COMMENT: '/''*' .* '*''/' -> skip;*/
 
 /*-------------------------------------------------------------------------------------
 Error Characters*/
@@ -271,5 +275,5 @@ Error Characters*/
 ILLEGAL_ESCAPE: '"' CHAR* ILL_ESCAPE_CHAR;
 UNCLOSE_STRING: '"' CHAR* ([\r\n] | EOF) ;
 ERROR_CHAR: [\u0100-\uFFFF]
-	| '"' [\u0100-\uFFFF] '"'
+	| '"' [\u0100-\uFFFF]* '"'
 	| .;

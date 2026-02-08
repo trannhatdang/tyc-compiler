@@ -15,6 +15,67 @@ def test_lexer_placeholder():
     # TODO: Add actual test assertions
     assert tokenizer.get_tokens_as_string() == 'EOF'
 '''
+###############Must Pass#################
+
+def test_keyword_auto():
+    """1. Keyword"""
+    tokenizer = Tokenizer("auto")
+    assert tokenizer.get_tokens_as_string() == "auto,<EOF>"
+
+
+def test_operator_assign():
+    """2. Operator"""
+    tokenizer = Tokenizer("=")
+    assert tokenizer.get_tokens_as_string() == "=,<EOF>"
+
+
+def test_separator_semi():
+    """3. Separator"""
+    tokenizer = Tokenizer(";")
+    assert tokenizer.get_tokens_as_string() == ";,<EOF>"
+
+
+def test_integer_single_digit():
+    """4. Integer literal"""
+    tokenizer = Tokenizer("5")
+    assert tokenizer.get_tokens_as_string() == "5,<EOF>"
+
+
+def test_float_decimal():
+    """5. Float literal"""
+    tokenizer = Tokenizer("3.14")
+    assert tokenizer.get_tokens_as_string() == "3.14,<EOF>"
+
+
+def test_string_simple():
+    """6. String literal"""
+    tokenizer = Tokenizer('"hello"')
+    assert tokenizer.get_tokens_as_string() == "hello,<EOF>"
+
+
+def test_identifier_simple():
+    """7. Identifier"""
+    tokenizer = Tokenizer("x")
+    assert tokenizer.get_tokens_as_string() == "x,<EOF>"
+
+
+def test_line_comment():
+    """8. Line comment"""
+    tokenizer = Tokenizer("// This is a comment")
+    assert tokenizer.get_tokens_as_string() == "<EOF>"
+
+
+def test_integer_in_expression():
+    """9. Mixed: integers and operator"""
+    tokenizer = Tokenizer("5+10")
+    assert tokenizer.get_tokens_as_string() == "5,+,10,<EOF>"
+
+def test_complex_expression():
+    """10. Complex: variable declaration"""
+    tokenizer = Tokenizer("auto x = 5 + 3 * 2;")
+    assert tokenizer.get_tokens_as_string() == "auto,x,=,5,+,3,*,2,;,<EOF>"
+
+###############Empty#################
 
 def test_empty_1():
     tokenizer = Tokenizer("")
@@ -53,6 +114,10 @@ def test_block_comments_2():
 def test_block_comments_3():
     tokenizer = Tokenizer("/*lmao")
     assert tokenizer.get_tokens_as_string() == "/,*,lmao,<EOF>"
+
+def test_block_comments_4():
+    tokenizer = Tokenizer("/*/*lmao*/*/")
+    assert tokenizer.get_tokens_as_string() == "<EOF>"
 
 ###############Identifiers#################
 
@@ -160,7 +225,7 @@ def test_escape_chara_2():
 
 def test_escape_chara_3():
     tokenizer = Tokenizer("\" \\\" \"")
-    assert tokenizer.get_tokens_as_string() == " \\\",<EOF>"
+    assert tokenizer.get_tokens_as_string() == " \\\" ,<EOF>"
 
 def test_inside_extended_ascii():
     tokenizer = Tokenizer("\"Ç\"")
@@ -178,9 +243,13 @@ def test_inside_extended_ascii_4():
     tokenizer = Tokenizer("\"\u00FF\"")
     assert tokenizer.get_tokens_as_string() == "\u00FF,<EOF>"
 
+def test_inside_extended_ascii_5():
+    tokenizer = Tokenizer("\"\u0081\"")
+    assert tokenizer.get_tokens_as_string() == "\u0081,<EOF>"
+
 def test_outside_extended_ascii():
     tokenizer = Tokenizer("\"迷\"")
-    assert tokenizer.get_tokens_as_string() == "Error Token 迷"
+    assert tokenizer.get_tokens_as_string() == "Error Token \"迷\""
 
 ###############Literals#################
 
@@ -438,27 +507,23 @@ def test_string_6():
 
 def test_string_7():
     tokenizer = Tokenizer("\"He asked me: \\\"Where is John?\\\" \"")
-    assert tokenizer.get_tokens_as_string() == "He asked me: \\\"Where is John?\\\",<EOF>"
+    assert tokenizer.get_tokens_as_string() == "He asked me: \\\"Where is John?\\\" ,<EOF>"
 
-def test_string_err_1():
-    tokenizer = Tokenizer("\" \r \"")
-    assert tokenizer.get_tokens_as_string() == "Unclosed String: \" \r"
+def test_string_8():
+    tokenizer = Tokenizer("\"Many people ask: Is Pyosik a god? \\t I find the question fascinating.\\n Let's redefine: What's a god? A god is one people believe in \t - \t someone who we can care for, cheer for \t - \t and many believe in Pyosik.\"")
+    assert tokenizer.get_tokens_as_string() == "Many people ask: Is Pyosik a god? \\t I find the question fascinating.\\n Let's redefine: What's a god? A god is one people believe in \t - \t someone who we can care for, cheer for \t - \t and many believe in Pyosik.,<EOF>"
 
-def test_string_err_2():
-    tokenizer = Tokenizer("\" \n \"")
-    assert tokenizer.get_tokens_as_string() == "Unclosed String: \" \n"
+def test_string_9():
+    tokenizer = Tokenizer("\"\fThis is a form feed. \\f This is also a form feed.\"")
+    assert tokenizer.get_tokens_as_string() == "\fThis is a form feed. \\f This is also a form feed.,<EOF>"
 
-def test_string_err_3():
-    tokenizer = Tokenizer("\" \r\n \"")
-    assert tokenizer.get_tokens_as_string() == "Unclosed String: \" \r"
+def test_string_10():
+    tokenizer = Tokenizer("\"\bThis is a backspace. \\b This is also a backspace.\"")
+    assert tokenizer.get_tokens_as_string() == "\bThis is a backspace. \\b This is also a backspace.,<EOF>"
 
-def test_string_err_4():
-    tokenizer = Tokenizer("\"")
-    assert tokenizer.get_tokens_as_string() == "Unclosed String: \""
-
-def test_string_err_5():
-    tokenizer = Tokenizer("\"employment is dead\r\"")
-    assert tokenizer.get_tokens_as_string() == "Unclosed String: \"employment is dead\r"
+def test_string_11():
+    tokenizer = Tokenizer("\"\\\\This is a backslash.\"")
+    assert tokenizer.get_tokens_as_string() == "\\\\This is a backslash.,<EOF>"
 
 def test_string_illegal_escape_1():
     tokenizer = Tokenizer("\"\\ \"")
@@ -482,27 +547,55 @@ def test_string_illegal_escape_5():
 
 def test_string_unclosed_string_1():
     tokenizer = Tokenizer("\"")
-    assert tokenizer.get_tokens_as_string() == "Unclosed String: \""
+    assert tokenizer.get_tokens_as_string() == "Unclosed String: "
 
 def test_string_unclosed_string_2():
     tokenizer = Tokenizer("\"\"\"")
-    assert tokenizer.get_tokens_as_string() == ",Unclosed String: \""
+    assert tokenizer.get_tokens_as_string() == ",Unclosed String: "
 
 def test_string_unclosed_string_3():
     tokenizer = Tokenizer("\"\"\"\"\"")
-    assert tokenizer.get_tokens_as_string() == ",,Unclosed String: \""
+    assert tokenizer.get_tokens_as_string() == ",,Unclosed String: "
 
 def test_string_unclosed_string_4():
     tokenizer = Tokenizer("\"lmao\"\"\"\"")
-    assert tokenizer.get_tokens_as_string() == "lmao,,Unclosed String: \""
+    assert tokenizer.get_tokens_as_string() == "lmao,,Unclosed String: "
 
 def test_string_unclosed_string_5():
     tokenizer = Tokenizer("\"lmao\"\"\"\"   ")
-    assert tokenizer.get_tokens_as_string() == "lmao,,Unclosed String: \"   "
+    assert tokenizer.get_tokens_as_string() == "lmao,,Unclosed String:    "
+
+def test_string_unclosed_string_6():
+    tokenizer = Tokenizer("\" \r \"")
+    assert tokenizer.get_tokens_as_string() == "Unclosed String:  \r"
+
+def test_string_unclosed_string_7():
+    tokenizer = Tokenizer("\" \n \"")
+    assert tokenizer.get_tokens_as_string() == "Unclosed String:  \n"
+
+def test_string_unclosed_string_8():
+    tokenizer = Tokenizer("\" \r\n \"")
+    assert tokenizer.get_tokens_as_string() == "Unclosed String:  \r"
+
+def test_string_unclosed_string_9():
+    tokenizer = Tokenizer("\"")
+    assert tokenizer.get_tokens_as_string() == "Unclosed String: "
+
+def test_string_unclosed_string_10():
+    tokenizer = Tokenizer("\" this is an unclosed string \n \"")
+    assert tokenizer.get_tokens_as_string() == "Unclosed String:  this is an unclosed string \n"
+
+def test_string_unclosed_string_11():
+    tokenizer = Tokenizer("\"employment is dead\r\"")
+    assert tokenizer.get_tokens_as_string() == "Unclosed String: employment is dead\r"
 
 def test_string_both_err_1():
     tokenizer = Tokenizer("\"\\g lmao   ")
     assert tokenizer.get_tokens_as_string() == "Illegal Escape In String: \\g"
+
+def test_string_both_err_2():
+    tokenizer = Tokenizer("\" some text \\l")
+    assert tokenizer.get_tokens_as_string() == "Illegal Escape In String:  some text \\l"
 
 ###############Expressions#################
 
@@ -733,6 +826,11 @@ def test_keyword_11():
 def test_keyword_12():
     tokenizer = Tokenizer("switch();")
     assert tokenizer.get_tokens_as_string() == "switch,(,),;,<EOF>"
+
+###############Error Char#################
+def test_error_char_1():
+    tokenizer = Tokenizer("\"がんばって\"")
+    assert tokenizer.get_tokens_as_string() == "Error Token \"がんばって\""
 
 
 

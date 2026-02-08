@@ -9,18 +9,20 @@ def emit(self):
 	tk = self.type
 	if tk == self.UNCLOSE_STRING:       
 		result = super().emit();
+		result.text = result.text[1:len(result.text):];
 		raise UncloseString(result.text);
 	elif tk == self.ILLEGAL_ESCAPE:
 		result = super().emit();
-		result.text = result.text.replace('\"', '');
+		result.text = result.text[1:len(result.text):];
 		raise IllegalEscape(result.text);
 	elif tk == self.ERROR_CHAR:
 		result = super().emit();
-		result.text = result.text.replace('\"', '');
+		if '"' in result.text:
+			result.text = result.text[1:len(result.text)-1:];
 		raise ErrorToken(result.text); 
 	elif tk == self.STRING:
 		result = super().emit();
-		result.text = result.text.replace('\"', '');
+		result.text = result.text[1:len(result.text)-1:];
 		return result;
 	else:
 		return super().emit();
@@ -233,10 +235,10 @@ fragment
 UNDERSCORE: '_';
 
 fragment
-ESCAPE_CHAR: ('\\' [0btnfr"'\\]);
+ESCAPE_CHAR: ('\\' [0btnfr"\\]);
 
 fragment
-ILL_ESCAPE_CHAR: '\\' ~[0btnfr"'\\];
+ILL_ESCAPE_CHAR: '\\' ~[0btnfr"\\];
 
 fragment
 CHAR: (~[\r\n\\"\u0100-\uFFFF]) | ESCAPE_CHAR ;

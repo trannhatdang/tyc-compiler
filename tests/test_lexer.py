@@ -148,8 +148,19 @@ def test_ID_err_2():
     tokenizer = Tokenizer("¼")
     assert tokenizer.get_tokens_as_string() == "Error Token ¼"
 
-
 ###############Characters#################
+
+def test_escape_chara_1():
+    tokenizer = Tokenizer("\"\\n\"")
+    assert tokenizer.get_tokens_as_string() == "\\n,<EOF>"
+
+def test_escape_chara_2():
+    tokenizer = Tokenizer("\"\\t\"")
+    assert tokenizer.get_tokens_as_string() == "\\t,<EOF>"
+
+def test_escape_chara_3():
+    tokenizer = Tokenizer("\" \\\" \"")
+    assert tokenizer.get_tokens_as_string() == " \\\",<EOF>"
 
 def test_inside_extended_ascii():
     tokenizer = Tokenizer("\"Ç\"")

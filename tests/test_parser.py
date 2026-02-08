@@ -526,9 +526,9 @@ def test_exp_1():
     assert Parser(source).parse() == "success"
 
 def test_exp_2():
-    source = "void main() { a + b = c }"
-    assert Parser(source).parse() == "Error on line 1 col 20: ="
-
-def test_exp_3():
     source = "void main() { a = b - c; }"
     assert Parser(source).parse() == "success"
+
+def test_exp_err_1():
+    source = "void main() { a + b = c }"
+    assert Parser(source).parse() == "Error on line 1 col 20: ="

@@ -259,7 +259,7 @@ STRING: '"' CHAR*? '"';
 
 NEWLINE:'\r'? '\n' -> skip;     // return newlines to parser (end-statement signal)
 
-WS: [ \t\r\n]+ -> skip;
+WS: [ \t\r\n\f]+ -> skip;
 COMMENT : '/''*' (COMMENT|.)*? '*''/' -> skip ;
 LINE_COMMENT  : '/''/' ~[\r\n]* -> skip ;
 

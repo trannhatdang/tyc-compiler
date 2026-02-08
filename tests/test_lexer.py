@@ -93,6 +93,12 @@ def test_empty_4():
     tokenizer = Tokenizer("                                                         ")
     assert tokenizer.get_tokens_as_string() == "<EOF>"
 
+###############Whitespace#################
+
+def test_whitespace_1():
+    tokenizer = Tokenizer(" \t\f\r\n")
+    assert tokenizer.get_tokens_as_string() == "<EOF>"
+
 ###############Comments#################
 
 def test_comments_1():

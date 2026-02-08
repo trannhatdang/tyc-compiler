@@ -88,7 +88,7 @@ def test_empty_err_1():
 
 def test_empty_err_2():
     source = "void fun() {;;;;;;}"
-    assert Parser(source).parse() == "Error online 1 col 12: ;"
+    assert Parser(source).parse() == "Error on line 1 col 12: ;"
 
 ###############Comments#################
 
@@ -284,6 +284,10 @@ def test_struct_16():
     source = "void main() { lm = {_abc.ld, b+c(), {3, 5}}; bernie bern = {{{{3}}}; }"
     assert Parser(source).parse() == "Error on line 1 col 67: ;"
 
+def test_struct_17():
+    source = "void main() { int a = abc().d; }"
+    assert Parser(source).parse() == "success"
+
 def test_struct_err_1():
     source = "struct hammond { struct mandy {int a; int b; };};"
     assert Parser(source).parse() == "Error on line 1 col 17: struct"
@@ -432,7 +436,7 @@ def test_if_err_9():
 
 def test_if_err_10():
     source = "void main() {if(pong_tin) { lmao(); a = 3 + 7; int s = 35;} else;}"
-    assert Parser(source).parse() == "Error online 1 col 60: else"
+    assert Parser(source).parse() == "Error on line 1 col 60: else"
 ###############Variable Declarations#################
 def test_while_1():
     source = "void main() {while(hammond) {boat();}}"
@@ -617,7 +621,7 @@ def test_for_33():
 
 def test_for_err_1():
     source = "void main() {for(int i = 0; i < 10; ++i) ;;;}"
-    assert Parser(source).parse() == "Error online 1 col 41: ;"
+    assert Parser(source).parse() == "Error on line 1 col 41: ;"
 
 ###############Variable Declarations#################
 def test_var_decl_1():
@@ -897,7 +901,7 @@ def test_exp_err_26():
 
 def test_exp_err_27():
     source = "void main() { =a  }"
-    assert Parser(source).parse() == "Error on line 1 col 17: ="
+    assert Parser(source).parse() == "Error on line 1 col 14: ="
 
 def test_exp_err_28():
     source = "void main() { /a  }"

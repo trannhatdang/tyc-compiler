@@ -82,13 +82,13 @@ def test_empty_4():
     source = "struct strong;"
     assert Parser(source).parse() == "success"
 
-def test_empty_5():
+def test_empty_err_1():
     source = "void fun() {;}"
-    assert Parser(source).parse() == "success"
+    assert Parser(source).parse() == "Error on line 1 col 12: ;"
 
-def test_empty_6():
+def test_empty_err_2():
     source = "void fun() {;;;;;;}"
-    assert Parser(source).parse() == "success"
+    assert Parser(source).parse() == "Error online 1 col 12: ;"
 
 ###############Comments#################
 
@@ -391,16 +391,12 @@ def test_if_8():
     assert Parser(source).parse() == "success"
 
 def test_if_9():
-    source = "void main() {if(pong_tin) { lmao(); a = 3 + 7; int s = 35;} else;}"
-    assert Parser(source).parse() == "success"
-
-def test_if_10():
     source = "void main() {if(pong_tin) { lmao(); a = 3 + 7; int s = 35;} else if(lmao) {lmao(); lmao();} else peaked();}"
     assert Parser(source).parse() == "success"
 
 def test_if_err_1():
     source = "void main() {if(pong_tin) { lmao(); }; else spot_of_lunch(); }"
-    assert Parser(source).parse() == "Error on line 1 col 39: else"
+    assert Parser(source).parse() == "Error on line 1 col 37: ;"
 
 def test_if_err_2():
     source = "void main() {if(pong_tin) { lmao(); } else chips }"
@@ -412,15 +408,15 @@ def test_if_err_3():
 
 def test_if_err_4():
     source = "void main() {if(pong_tin) { lmao(); } else; { }"
-    assert Parser(source).parse() == "Error on line 1 col 47: <EOF>"
+    assert Parser(source).parse() == "Error on line 1 col 38: else"
 
 def test_if_err_5():
     source = "void main() {if(pong_tin); { lmao(); } else;}"
-    assert Parser(source).parse() == "Error on line 1 col 39: else"
+    assert Parser(source).parse() == "Error on line 1 col 25: ;"
 
 def test_if_err_6():
     source = "void main() {if(pong_tin); { lmao(); } else if;}"
-    assert Parser(source).parse() == "Error on line 1 col 39: else"
+    assert Parser(source).parse() == "Error on line 1 col 25: ;"
 
 def test_if_err_7():
     source = "void main() {if }"
@@ -433,6 +429,10 @@ def test_if_err_8():
 def test_if_err_9():
     source = "void main() {if {lmao(); }}"
     assert Parser(source).parse() == "Error on line 1 col 16: {"
+
+def test_if_err_10():
+    source = "void main() {if(pong_tin) { lmao(); a = 3 + 7; int s = 35;} else;}"
+    assert Parser(source).parse() == "Error online 1 col 60: else"
 ###############Variable Declarations#################
 def test_while_1():
     source = "void main() {while(hammond) {boat();}}"
@@ -612,12 +612,12 @@ def test_for_32():
     assert Parser(source).parse() == "success"
 
 def test_for_33():
-    source = "void main() {for(int i = 0; i < 10; ++i) ;;;}"
-    assert Parser(source).parse() == "success"
-
-def test_for_34():
     source = "void main() {for(int i = 0; i < 10; ++i) pete();}"
     assert Parser(source).parse() == "success"
+
+def test_for_err_1():
+    source = "void main() {for(int i = 0; i < 10; ++i) ;;;}"
+    assert Parser(source).parse() == "Error online 1 col 41: ;"
 
 ###############Variable Declarations#################
 def test_var_decl_1():
@@ -897,7 +897,7 @@ def test_exp_err_26():
 
 def test_exp_err_27():
     source = "void main() { =a  }"
-    assert Parser(source).parse() == "Error on line 1 col 17: =a"
+    assert Parser(source).parse() == "Error on line 1 col 17: ="
 
 def test_exp_err_28():
     source = "void main() { /a  }"
@@ -933,13 +933,13 @@ def test_exp_err_35():
 
 def test_exp_err_36():
     source = "void main() { .a  }"
-    assert Parser(source).parse() == "Error on line 1 col 36: ."
+    assert Parser(source).parse() == "Error on line 1 col 14: ."
 
-def test_exp_err_47():
+def test_exp_err_37():
     source = "void main() { == a   }"
     assert Parser(source).parse() == "Error on line 1 col 14: =="
 
-def test_exp_err_48():
+def test_exp_err_38():
     source = "void main() { != a  }"
     assert Parser(source).parse() == "Error on line 1 col 14: !="
 ###############In Spec (Must Pass)#################

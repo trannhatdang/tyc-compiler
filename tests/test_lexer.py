@@ -32,6 +32,28 @@ def test_empty_4():
     tokenizer = Tokenizer("                                                         ")
     assert tokenizer.get_tokens_as_string() == "<EOF>"
 
+###############Comments#################
+
+def test_comments_1():
+    tokenizer = Tokenizer("//this is a comment")
+    assert tokenizer.get_tokens_as_string() == "<EOF>"
+
+def test_comments_2():
+    tokenizer = Tokenizer("//this should be all ignored \r\n\n\n\n\n\n")
+    assert tokenizer.get_tokens_as_string() == "<EOF>"
+
+def test_block_comments_1():
+    tokenizer = Tokenizer("/*this is a block comment \r\n\r\n\r\n*/")
+    assert tokenizer.get_tokens_as_string() == "<EOF>"
+
+def test_block_comments_2():
+    tokenizer = Tokenizer("/*lmao*/")
+    assert tokenizer.get_tokens_as_string() == "<EOF>"
+
+def test_block_comments_3():
+    tokenizer = Tokenizer("/*lmao")
+    assert tokenizer.get_tokens_as_string() == "/,*,lmao,<EOF>"
+
 ###############Identifiers#################
 
 def test_ID_only_words_1():
@@ -118,10 +140,35 @@ def test_ID_words_underscore_number_4():
     tokenizer = Tokenizer("_1a")
     assert tokenizer.get_tokens_as_string() == "_1a,<EOF>"
 
+def test_ID_err_1():
+    tokenizer = Tokenizer("\u00C8")
+    assert tokenizer.get_tokens_as_string() == "Error Token \u00C8"
+
+def test_ID_err_2():
+    tokenizer = Tokenizer("¼")
+    assert tokenizer.get_tokens_as_string() == "Error Token ¼"
+
+
 ###############Characters#################
 
+def test_inside_extended_ascii():
+    tokenizer = Tokenizer("\"Ç\"")
+    assert tokenizer.get_tokens_as_string() == "Ç,<EOF>"
+
+def test_inside_extended_ascii_2():
+    tokenizer = Tokenizer("\"\u00A1\"")
+    assert tokenizer.get_tokens_as_string() == "\u00A1,<EOF>"
+
+def test_inside_extended_ascii_3():
+    tokenizer = Tokenizer("\"\u007f\u00D1\"")
+    assert tokenizer.get_tokens_as_string() == "\u007f\u00D1,<EOF>"
+
+def test_inside_extended_ascii_4():
+    tokenizer = Tokenizer("\"\u00FF\"")
+    assert tokenizer.get_tokens_as_string() == "\u00FF,<EOF>"
+
 def test_outside_extended_ascii():
-    tokenizer = Tokenizer("迷")
+    tokenizer = Tokenizer("\"迷\"")
     assert tokenizer.get_tokens_as_string() == "Error Token 迷"
 
 ###############Literals#################
@@ -370,29 +417,57 @@ def test_string_4():
     tokenizer = Tokenizer("\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum vel lorem urna. Sed pretium et leo vel lobortis. Quisque in neque vehicula, scelerisque nisi in, tempus nunc. Phasellus et leo dolor. Donec lacinia dictum turpis sit amet sodales. Nunc iaculis viverra dolor at mollis. Mauris id nisi ligula. Quisque nec rutrum neque. Quisque volutpat quam id nisl dignissim, vel finibus elit cursus. Aliquam volutpat, eros quis imperdiet facilisis, nunc turpis molestie libero, non suscipit orci nulla ut augue. Etiam id lorem sed odio rhoncus euismod. Pellentesque id ultricies lectus, et bibendum diam. Quisque vel dui quis libero ultrices blandit. Morbi in eros ultrices, fermentum arcu vel, ornare eros.\"")
     assert tokenizer.get_tokens_as_string() == "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum vel lorem urna. Sed pretium et leo vel lobortis. Quisque in neque vehicula, scelerisque nisi in, tempus nunc. Phasellus et leo dolor. Donec lacinia dictum turpis sit amet sodales. Nunc iaculis viverra dolor at mollis. Mauris id nisi ligula. Quisque nec rutrum neque. Quisque volutpat quam id nisl dignissim, vel finibus elit cursus. Aliquam volutpat, eros quis imperdiet facilisis, nunc turpis molestie libero, non suscipit orci nulla ut augue. Etiam id lorem sed odio rhoncus euismod. Pellentesque id ultricies lectus, et bibendum diam. Quisque vel dui quis libero ultrices blandit. Morbi in eros ultrices, fermentum arcu vel, ornare eros.,<EOF>"
 
+def test_string_5():
+    tokenizer = Tokenizer("\"this is a string containing tab\t\"")
+    assert tokenizer.get_tokens_as_string() == "this is a string containing tab\t,<EOF>"
+
+def test_string_6():
+    tokenizer = Tokenizer("\"this is a string containing tab\\t\"")
+    assert tokenizer.get_tokens_as_string() == "this is a string containing tab\\t,<EOF>"
+
+def test_string_7():
+    tokenizer = Tokenizer("\"He asked me: \\\"Where is John?\\\" \"")
+    assert tokenizer.get_tokens_as_string() == "He asked me: \\\"Where is John?\\\",<EOF>"
+
+def test_string_err_1():
+    tokenizer = Tokenizer("\" \r \"")
+    assert tokenizer.get_tokens_as_string() == "Unclosed String: \" \r"
+
+def test_string_err_2():
+    tokenizer = Tokenizer("\" \n \"")
+    assert tokenizer.get_tokens_as_string() == "Unclosed String: \" \n"
+
+def test_string_err_3():
+    tokenizer = Tokenizer("\" \r\n \"")
+    assert tokenizer.get_tokens_as_string() == "Unclosed String: \" \r"
+
+def test_string_err_4():
+    tokenizer = Tokenizer("\"")
+    assert tokenizer.get_tokens_as_string() == "Unclosed String: \""
+
+def test_string_err_5():
+    tokenizer = Tokenizer("\"employment is dead\r\"")
+    assert tokenizer.get_tokens_as_string() == "Unclosed String: \"employment is dead\r"
+
 def test_string_illegal_escape_1():
-    tokenizer = Tokenizer(" \" \\   \" ")
-    assert tokenizer.get_tokens_as_string() == "Illegal Escape In String: \" \\   \""
+    tokenizer = Tokenizer("\"\\ \"")
+    assert tokenizer.get_tokens_as_string() == "Illegal Escape In String: \\ "
 
 def test_string_illegal_escape_2():
-    tokenizer = Tokenizer("\" \\g lmao \"")
-    assert tokenizer.get_tokens_as_string() == "Illegal Escape In String: \" \\g lmao \""
+    tokenizer = Tokenizer("\"\\g lmao\"")
+    assert tokenizer.get_tokens_as_string() == "Illegal Escape In String: \\g"
 
 def test_string_illegal_escape_3():
-    tokenizer = Tokenizer("\" \\glmao \"")
-    assert tokenizer.get_tokens_as_string() == "Illegal Escape In String: \" \\glmao \""
+    tokenizer = Tokenizer("\"\\glmao\"")
+    assert tokenizer.get_tokens_as_string() == "Illegal Escape In String: \\g"
 
 def test_string_illegal_escape_4():
-    tokenizer = Tokenizer("\"   \\glmao\"")
-    assert tokenizer.get_tokens_as_string() == "Illegal Escape In String: \"   \\glmao\""
+    tokenizer = Tokenizer("\"asdgsdg \\a asdgasdg     \"")
+    assert tokenizer.get_tokens_as_string() == "Illegal Escape In String: asdgsdg \\a"
 
 def test_string_illegal_escape_5():
-    tokenizer = Tokenizer("\"\\     \"")
-    assert tokenizer.get_tokens_as_string() == "Illegal Escape In String: \"\\     \""
-
-def test_string_illegal_escape_6():
-    tokenizer = Tokenizer("\"asdgsdg \\a asdgasdg     \"")
-    assert tokenizer.get_tokens_as_string() == "Illegal Escape In String: \"\\     \""
+    tokenizer = Tokenizer("\"\\x01 \"")
+    assert tokenizer.get_tokens_as_string() == "Illegal Escape In String: \\x"
 
 def test_string_unclosed_string_1():
     tokenizer = Tokenizer("\"")
@@ -415,9 +490,8 @@ def test_string_unclosed_string_5():
     assert tokenizer.get_tokens_as_string() == "lmao,,Unclosed String: \"   "
 
 def test_string_both_err_1():
-    tokenizer = Tokenizer("\" \g lmao   ")
-    assert tokenizer.get_tokens_as_string() == "Illegal Escape In String: \g"
-
+    tokenizer = Tokenizer("\"\\g lmao   ")
+    assert tokenizer.get_tokens_as_string() == "Illegal Escape In String: \\g"
 
 ###############Expressions#################
 

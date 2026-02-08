@@ -5,20 +5,6 @@ from lexererr import *
 }
 
 @lexer::members {
-def valid_escape(self, text):
-	return True
-
-def check_ill(self, text):
-	if '\\' not in text:
-		return
-	
-	for i in range(len(text)):
-		if i == len(text) - 1:
-			pass
-		
-		if text[i] == '\\' and self.valid_escape(text[i+1]):
-			pass
-
 def emit(self):
 	tk = self.type
 	if tk == self.UNCLOSE_STRING:       
@@ -30,6 +16,7 @@ def emit(self):
 		raise IllegalEscape(result.text);
 	elif tk == self.ERROR_CHAR:
 		result = super().emit();
+		result.text = result.text.replace('\"', '');
 		raise ErrorToken(result.text); 
 	elif tk == self.STRING:
 		result = super().emit();
@@ -246,13 +233,16 @@ fragment
 UNDERSCORE: '_';
 
 fragment
-ESCAPE_CHAR: '\\' [0btnfr"'\\];
+ESCAPE_CHAR: ('\\' [0btnfr"'\\]);
 
 fragment
 ILL_ESCAPE_CHAR: '\\' ~[0btnfr"'\\];
 
 fragment
-CHAR: ESCAPE_CHAR | ~[\r\n\\"];
+CHAR: (~[\r\n\\"\u0100-\uFFFF]) | ESCAPE_CHAR ;
+
+fragment
+DOUBLE_QUOTE: '"';
 
 ID  :   (LETTER | UNDERSCORE) (LETTER | DIGIT | UNDERSCORE)* ;      // match identifiers
 INT :   ('-')? DIGIT+ ;         // match integers
@@ -265,7 +255,7 @@ FLOAT:  ('-')? DIGIT+
 ;
 BOOL: 'true' | 'false' ;
 
-STRING: '"' CHAR* '"';
+STRING: '"' CHAR*? '"';
 
 NEWLINE:'\r'? '\n' -> skip;     // return newlines to parser (end-statement signal)
 
@@ -277,5 +267,7 @@ MULTILINE_COMMENT: '/''*' .*? '*''/' -> skip;
 Error Characters*/
 
 ILLEGAL_ESCAPE: '"' CHAR* ILL_ESCAPE_CHAR;
-UNCLOSE_STRING: '"' CHAR*;
-ERROR_CHAR: .;
+UNCLOSE_STRING: '"' CHAR* ([\r\n] | EOF) ;
+ERROR_CHAR: [\u0100-\uFFFF]
+	| '"' [\u0100-\uFFFF] '"'
+	| .;

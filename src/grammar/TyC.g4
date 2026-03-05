@@ -7,7 +7,7 @@ from lexererr import *
 @lexer::members {
 def emit(self):
 	tk = self.type
-	if tk == self.UNCLOSE_STRING:       
+	if tk == self.UNCLOSE_STRING:
 		result = super().emit();
 		result.text = result.text[1:len(result.text):];
 		raise UncloseString(result.text);
@@ -17,7 +17,7 @@ def emit(self):
 		raise IllegalEscape(result.text);
 	elif tk == self.ERROR_CHAR:
 		result = super().emit();
-		raise ErrorToken(result.text); 
+		raise ErrorToken(result.text);
 	elif tk == self.STRING:
 		result = super().emit();
 		result.text = result.text[1:len(result.text)-1:];
@@ -245,7 +245,8 @@ fragment
 DOUBLE_QUOTE: '"';
 
 ID  :   (LETTER | UNDERSCORE) (LETTER | DIGIT | UNDERSCORE)* ;      // match identifiers
-INT :   ('-')? DIGIT+ ;         // match integers
+INT :   DIGIT+ 
+	| '-' DIGIT+;         // match integers
 FLOAT:  ('-')? DIGIT+
 	(
 		'.' DIGIT*

@@ -245,8 +245,9 @@ fragment
 DOUBLE_QUOTE: '"';
 
 ID  :   (LETTER | UNDERSCORE) (LETTER | DIGIT | UNDERSCORE)* ;      // match identifiers
-INT :   DIGIT+ 
-	| '-' DIGIT+;         // match integers
+INT :   DIGIT+
+	| ('-') DIGIT+;
+
 FLOAT:  ('-')? DIGIT+
 	(
 		'.' DIGIT*

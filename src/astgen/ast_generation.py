@@ -9,16 +9,13 @@ from build.TyCVisitor import TyCVisitor
 from build.TyCParser import TyCParser
 from src.utils.nodes import *
 
-from src.nodes import *
-from src.visitor import *
-
 class ASTGeneration(TyCVisitor):
     """AST Generation visitor for TyC language."""
     # Visit a parse tree produced by TyCParser#program.
 
     def visitProgram(self, ctx:TyCParser.ProgramContext):
-        prog = Program()
-        prog.decls = self.visitChildren(ctx)
+        decls = self.visit(ctx.prog_stat_list())
+        prog = Program(decls)
 
         return prog
 

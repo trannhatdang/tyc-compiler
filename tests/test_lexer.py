@@ -99,6 +99,36 @@ def test_whitespace_1():
     tokenizer = Tokenizer(" \t\f\r\n")
     assert tokenizer.get_tokens_as_string() == "<EOF>"
 
+###############Whitespace#################
+
+def test_int_1():
+    tokenizer = Tokenizer("01")
+    assert tokenizer.get_tokens_as_string() == "01,<EOF>"
+
+def test_int_2():
+    tokenizer = Tokenizer("-3")
+    assert tokenizer.get_tokens_as_string() == "-3,<EOF>"
+
+def test_int_3():
+    tokenizer = Tokenizer("5-3")
+    assert tokenizer.get_tokens_as_string() == "5,-,3,<EOF>"
+
+def test_int_4():
+    tokenizer = Tokenizer("+3")
+    assert tokenizer.get_tokens_as_string() == "+,3,<EOF>"
+    
+def test_int_5():
+    tokenizer = Tokenizer("5+3")
+    assert tokenizer.get_tokens_as_string() == "5,+,3,<EOF>"
+
+def test_int_6():
+    tokenizer = Tokenizer("5+")
+    assert tokenizer.get_tokens_as_string() == "5,+,<EOF>"
+
+def test_err_int_1():
+    tokenizer = Tokenizer("01+3")
+    assert tokenizer.get_tokens_as_string() == "01,+,3,<EOF>"
+
 ###############Comments#################
 
 def test_comments_1():

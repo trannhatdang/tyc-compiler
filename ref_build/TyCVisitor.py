@@ -1,26 +1,18 @@
-"""
-AST Generation module for TyC programming language.
-This module contains the ASTGeneration class that converts parse trees
-into Abstract Syntax Trees using the visitor pattern.
-"""
+# Generated from D:/DH/HK252/BTL_PPL/src/grammar/TyC.g4 by ANTLR 4.13.2
+from antlr4 import *
+if "." in __name__:
+    from .TyCParser import TyCParser
+else:
+    from TyCParser import TyCParser
 
-from functools import reduce
-from build.TyCVisitor import TyCVisitor
-from build.TyCParser import TyCParser
-from src.utils.nodes import *
+# This class defines a complete generic visitor for a parse tree produced by TyCParser.
 
-from src.nodes import *
-from src.visitor import *
+class TyCVisitor(ParseTreeVisitor):
 
-class ASTGeneration(TyCVisitor):
-    """AST Generation visitor for TyC language."""
     # Visit a parse tree produced by TyCParser#program.
-
     def visitProgram(self, ctx:TyCParser.ProgramContext):
-        prog = Program()
-        prog.decls = self.visitChildren(ctx)
+        return self.visitChildren(ctx)
 
-        return prog
 
     # Visit a parse tree produced by TyCParser#prog_stat_list.
     def visitProg_stat_list(self, ctx:TyCParser.Prog_stat_listContext):
@@ -34,13 +26,7 @@ class ASTGeneration(TyCVisitor):
 
     # Visit a parse tree produced by TyCParser#func_decl.
     def visitFunc_decl(self, ctx:TyCParser.Func_declContext):
-        return_type = self.visit(ctx.return_type())
-        ID = self.visit(ctx.ID())
-        params = self.visit(ctx.param_list())
-        stat_list = self.visit(ctx.stat_list())
-
-        func_decl = FuncDecl(return_type, ID, params, stat_list)
-        return func_decl
+        return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by TyCParser#param_list.
@@ -231,4 +217,7 @@ class ASTGeneration(TyCVisitor):
     # Visit a parse tree produced by TyCParser#post_op.
     def visitPost_op(self, ctx:TyCParser.Post_opContext):
         return self.visitChildren(ctx)
-    pass
+
+
+
+del TyCParser

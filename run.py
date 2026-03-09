@@ -570,8 +570,9 @@ class TyCBuilder:
 
             env = os.environ.copy()
             env["PYTHONPATH"] = str(self.root_dir)
-            curr_date = datetime.datetime
-            curr_date = curr_date.now()
+
+            curr_time = datetime.datetime
+            curr_time = str(curr_time.now().strftime('%Y-%m-%d %H-%M-%S'))
 
             self.run_command(
                 [
@@ -579,7 +580,7 @@ class TyCBuilder:
                     "-m",
                     "pytest",
                     "tests/test_ast_gen.py",
-                    f"--html={ast_report_dir}/test_ast_{curr_date}.html",
+                    f"--html={ast_report_dir}/test_ast_{curr_time}.html",
                     "--timeout=5",
                     "--self-contained-html",
                     "-v",
@@ -589,7 +590,7 @@ class TyCBuilder:
 
             print(
                 self.colors.green(
-                    f"AST generation tests completed. Reports at {ast_report_dir}/test_ast_{curr_date}.html"
+                    f"AST generation tests completed. Reports at {ast_report_dir}/test_ast_{curr_time}.html"
                 )
             )
             self.clean_cache()

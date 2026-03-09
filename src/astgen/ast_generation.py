@@ -21,6 +21,9 @@ class ASTGeneration(TyCVisitor):
 
     # Visit a parse tree produced by TyCParser#prog_stat_list.
     def visitProg_stat_list(self, ctx:TyCParser.Prog_stat_listContext):
+        prog_stat_list = self.visit(ctx.prog_stat_list())
+        prog_stat = self.visit(ctx.prog_stat())
+
         return self.visitChildren(ctx)
 
     # Visit a parse tree produced by TyCParser#prog_stat.

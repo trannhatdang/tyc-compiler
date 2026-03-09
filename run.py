@@ -559,39 +559,48 @@ class TyCBuilder:
 
     def test_ast(self, watch = False, **kwargs):
         """Run AST generation tests."""
-        self.build_grammar()
+        if not watch:
+            self.build_grammar()
 
-        print(self.colors.yellow("Running AST generation tests..."))
-        ast_report_dir = self.report_dir / "ast"
-        if ast_report_dir.exists():
-            shutil.rmtree(ast_report_dir)
-        self.report_dir.mkdir(exist_ok=True)
+            print(self.colors.yellow("Running AST generation tests..."))
+            ast_report_dir = self.report_dir / "ast"
+            if ast_report_dir.exists():
+                shutil.rmtree(ast_report_dir)
+            self.report_dir.mkdir(exist_ok=True)
 
-        env = os.environ.copy()
-        env["PYTHONPATH"] = str(self.root_dir)
-        curr_date = datetime.datetime
-        curr_date = curr_date.now()
+            env = os.environ.copy()
+            env["PYTHONPATH"] = str(self.root_dir)
+            curr_date = datetime.datetime
+            curr_date = curr_date.now()
 
-        self.run_command(
-            [
-                str(self.venv_python3),
-                "-m",
-                "pytest",
-                "tests/test_ast_gen.py",
-                f"--html={ast_report_dir}/test_ast_{curr_date}.html",
-                "--timeout=5",
-                "--self-contained-html",
-                "-v",
-            ],
-            check=False,
-        )
-
-        print(
-            self.colors.green(
-                f"AST generation tests completed. Reports at {ast_report_dir}/index.html"
+            self.run_command(
+                [
+                    str(self.venv_python3),
+                    "-m",
+                    "pytest",
+                    "tests/test_ast_gen.py",
+                    f"--html={ast_report_dir}/test_ast_{curr_date}.html",
+                    "--timeout=5",
+                    "--self-contained-html",
+                    "-v",
+                ],
+                check=False,
             )
-        )
-        self.clean_cache()
+
+            print(
+                self.colors.green(
+                    f"AST generation tests completed. Reports at {ast_report_dir}/test_ast_{curr_date}.html"
+                )
+            )
+            self.clean_cache()
+
+            return
+
+        watch_files = [self.root_dir / "src" / "grammar" / "TyC.g4", self.root_dir / "src" / "astgen" / "ast_generation.py"]
+
+        watch_kwargs = {'watch': False}
+        self.watch(target = self.test_ast, files = watch_files, watch_kwargs = watch_kwargs, constant_check = False, force_close = True)
+
 
     def test_gui(self, watch = False, ui = False, **kwargs):
         if not watch:

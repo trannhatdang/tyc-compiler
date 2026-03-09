@@ -246,7 +246,7 @@ DOUBLE_QUOTE: '"';
 
 ID  :   (LETTER | UNDERSCORE) (LETTER | DIGIT | UNDERSCORE)* ;      // match identifiers
 INT :   DIGIT+
-	| ('-') DIGIT+;
+	| '-' DIGIT+;
 
 FLOAT:  ('-')? DIGIT+
 	(

@@ -13,3 +13,11 @@ def test_ast_gen_placeholder():
 }"""
     expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([]))])"
     assert str(ASTGenerator(source).generate()) == expected
+
+# def test_ast_gen_1():
+#     """Placeholder test - replace with actual test cases"""
+#     source = """void main(int a) {
+# }"""
+#     expected = "Program([FuncDecl(VoidType(), main, [int, a], BlockStmt([]))])"
+#     assert str(ASTGenerator(source).generate()) == expected
+

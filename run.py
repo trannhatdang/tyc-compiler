@@ -564,9 +564,6 @@ class TyCBuilder:
 
             print(self.colors.yellow("Running AST generation tests..."))
             ast_report_dir = self.report_dir / "ast"
-            if ast_report_dir.exists():
-                shutil.rmtree(ast_report_dir)
-            self.report_dir.mkdir(exist_ok=True)
 
             env = os.environ.copy()
             env["PYTHONPATH"] = str(self.root_dir)
@@ -597,7 +594,8 @@ class TyCBuilder:
 
             return
 
-        watch_files = [self.root_dir / "src" / "grammar" / "TyC.g4", self.root_dir / "src" / "astgen" / "ast_generation.py"]
+        watch_files = [self.root_dir / "src" / "grammar" / "TyC.g4", self.root_dir / "src" / "astgen" / "ast_generation.py", 
+                       self.root_dir / "tests" / "test_ast_gen.py"]
 
         watch_kwargs = {'watch': False}
         self.watch(target = self.test_ast, files = watch_files, watch_kwargs = watch_kwargs, constant_check = False, force_close = True)

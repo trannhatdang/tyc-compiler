@@ -26,13 +26,17 @@ class ASTGeneration(TyCVisitor):
         prog_stat_list_context = ctx.prog_stat_list()
         prog_stat_context = ctx.prog_stat()
 
-        if prog_stat_list_context is None:
-            return None
+        next_prog_stat_list = self.visit(prog_stat_list_context) if prog_stat_list_context is not None else None
+        prog_stat = self.visit(prog_stat_context) if prog_stat_context is not None else None
 
-        next_prog_stat_list = self.visit(prog_stat_list_context)
-        prog_stat = self.visit(prog_stat_context)
+        decls = []
 
-        decls = [].extend(next_prog_stat_list).extend(prog_stat)
+        if prog_stat is not None:
+            decls.append(prog_stat)
+
+
+        if next_prog_stat_list is not None:
+            decls.extend(next_prog_stat_list)
 
         return decls
 
@@ -45,7 +49,6 @@ class ASTGeneration(TyCVisitor):
         struct_decl = self.visit(struct_decl_context) if struct_decl_context is not None else None
 
         stat = func_decl if func_decl is not None else struct_decl
-
         return stat
 
     # Visit a parse tree produced by TyCParser#func_decl.
@@ -56,33 +59,72 @@ class ASTGeneration(TyCVisitor):
         stat_list_context = ctx.stat_list()
 
         return_type = self.visit(return_type_context) if return_type_context is not None else None
-        ID = self.visit(ID_context)
+        ID = ID_context
         param_list = self.visit(param_list_context)
         stat_list = self.visit(stat_list_context)
 
-        func_decl = FuncDecl(return_type, ID, params, stat_list)
+        func_decl = FuncDecl(return_type, ID, param_list, stat_list)
         return func_decl
 
     # Visit a parse tree produced by TyCParser#param_list.
     def visitParam_list(self, ctx:TyCParser.Param_listContext):
         param_list_context = ctx.param_list()
-        param = ctx.param()
+        param_context = ctx.param()
 
+        param_list = self.visit(param_list_context) if param_list_context is not None else None
+        param = self.visit(param_context) if param_context is not None else None
 
+        ret = []
 
-        return self.visitChildren(ctx)
+        if param is not None:
+            ret.append(param)
+
+        if param_list is not None:
+            ret.extend(param_list)
+
+        return ret
 
     # Visit a parse tree produced by TyCParser#param.
     def visitParam(self, ctx:TyCParser.ParamContext):
-        return self.visitChildren(ctx)
+        param_type_context = ctx.param_type()
+        ID_context = ctx.ID()
+
+        param_type = self.visit(param_type_context)
+        ID = ID_context
+
+        ret = Param(param_type, ID)
+
+        return ret
 
     # Visit a parse tree produced by TyCParser#param_type.
     def visitParam_type(self, ctx:TyCParser.Param_typeContext):
-        return self.visitChildren(ctx)
+        int_type_context = ctx.INT_TYPE()
+        float_type_context = ctx.FLOAT_TYPE()
+        string_type_context = ctx.STRING_TYPE()
+        ID_type_context = ctx.ID()
+
+        if int_type_context is not None:
+            return IntType()
+        elif float_type_context is not None:
+            return FloatType()
+        elif string_type_context is not None:
+            return StringType()
+        elif ID_type_context is not None:
+            return StructType(ID_type_context)
+        
+        return None
 
     # Visit a parse tree produced by TyCParser#return_type.
     def visitReturn_type(self, ctx:TyCParser.Return_typeContext):
-        return self.visitChildren(ctx)
+        param_type_context = ctx.param_type()
+        void_type_context = ctx.VOID_TYPE()
+
+        if void_type_context is not None:
+            return VoidType()
+        elif param_type_context is not None:
+            return self.visit(param_type_context)
+
+        return None
 
     # Visit a parse tree produced by TyCParser#struct_decl.
     def visitStruct_decl(self, ctx:TyCParser.Struct_declContext):
@@ -102,7 +144,21 @@ class ASTGeneration(TyCVisitor):
 
     # Visit a parse tree produced by TyCParser#stat_list.
     def visitStat_list(self, ctx:TyCParser.Stat_listContext):
-        return self.visitChildren(ctx)
+        stat_context = ctx.stat()
+        stat_list_context = ctx.stat_list()
+
+        stat = self.visit(stat_context) if stat_context is not None else None
+        stat_list = self.visit(stat_list_context) if stat_list_context is not None else None
+
+        ret = []
+
+        if stat is not None:
+            ret.append(stat)
+
+        if stat_list is not None:
+            ret.extend(stat_list)
+
+        return ret
 
     # Visit a parse tree produced by TyCParser#stat.
     def visitStat(self, ctx:TyCParser.StatContext):

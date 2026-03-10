@@ -50,7 +50,7 @@ func_decl: return_type ID '(' param_list ')' '{' stat_list '}'
 	| ID '(' param_list ')' '{' stat_list '}';
 param_list: param ',' param_list | param | ;
 param: param_type ID;
-param_type: var_type;
+param_type: INT_TYPE | STRING_TYPE | FLOAT_TYPE | ID;
 return_type: param_type | VOID_TYPE;
 
 /*------------------------------------------------------------------------------------

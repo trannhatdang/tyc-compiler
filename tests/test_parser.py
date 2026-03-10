@@ -412,7 +412,7 @@ def test_if_err_3():
 
 def test_if_err_4():
     source = "void main() {if(pong_tin) { lmao(); } else; { }"
-    assert Parser(source).parse() == "Error on line 1 col 38: else"
+    assert Parser(source).parse() == "Error on line 1 col 42: ;"
 
 def test_if_err_5():
     source = "void main() {if(pong_tin); { lmao(); } else;}"
@@ -436,7 +436,7 @@ def test_if_err_9():
 
 def test_if_err_10():
     source = "void main() {if(pong_tin) { lmao(); a = 3 + 7; int s = 35;} else;}"
-    assert Parser(source).parse() == "Error on line 1 col 60: else"
+    assert Parser(source).parse() == "Error on line 1 col 64: ;"
 ###############Variable Declarations#################
 def test_while_1():
     source = "void main() {while(hammond) {boat();}}"

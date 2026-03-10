@@ -78,23 +78,19 @@ var_type: INT_TYPE | STRING_TYPE | FLOAT_TYPE | AUTO | ID;
 
 block_stat: '{' stat_list '}' ;
 
-if_stat: IF '(' expr ')' '{' main_if_stat_list '}'
-	| IF '(' expr ')' main_if_stat
-	| IF '(' expr ')' main_if_stat ELSE else_if_stat
-	| IF '(' expr ')' '{' main_if_stat_list '}' ELSE '{' else_if_stat_list '}' 
-;
+if_stat: IF '(' expr ')' main_if_stat
+	| IF '(' expr ')' main_if_stat ELSE else_if_stat ;
 
 main_if_stat: stat ;
 else_if_stat: stat ;
-main_if_stat_list: stat_list ;
-else_if_stat_list: stat_list ;
 
-while_stat: WHILE '(' expr ')' '{' stat_list '}'
-	| WHILE '(' expr ')' stat;
+while_stat: WHILE '(' expr ')' stat ;
 
-for_stat: FOR '(' (var_decl_expr | assign_expr | ) ';' (expr | ) ';' (assign_expr | inc_expr | dec_expr | ) ')' '{' stat_list '}'
-	| FOR '(' (var_decl_expr | assign_expr | ) ';' (expr | ) ';' (assign_expr | inc_expr | dec_expr | ) ')' stat
-;
+for_stat: FOR '(' for_init_stat ';' for_cond_stat ';' for_update_stat ')' stat ;
+
+for_init_stat: var_decl_expr | expr_stat | ;
+for_cond_stat: expr | ;
+for_update_stat: expr | ;
 
 switch_stat: SWITCH '(' expr ')' '{' case_expr_list default_case_expr '}';
 

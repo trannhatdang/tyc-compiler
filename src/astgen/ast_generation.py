@@ -313,24 +313,10 @@ class ASTGeneration(TyCVisitor):
         expr_ctx = ctx.expr()
         main_if_stat_ctx = ctx.main_if_stat()
         else_if_stat_ctx = ctx.else_if_stat()
-        main_if_stat_list_ctx = ctx.main_if_stat_list()
-        else_if_stat_list_ctx = ctx.else_if_stat_list()
 
         expr = self.visit(expr_ctx)
-
-        main_stmt = None
-        else_stmt = None
-
-        if main_if_stat_ctx:
-            main_stmt = self.visit(main_if_stat_ctx)
-        else:
-            main_stmt = self.visit(main_if_stat_list_ctx)
-
-        if else_if_stat:
-            else_stmt = self.visit(else_if_stat_ctx)
-
-        if else_if_stat_list:
-            else_stmt = self.visit(else_if_stat_list_ctx)
+        main_stmt = self.visit(main_if_stat_ctx)
+        else_stmt = self.visit(else_if_stat_ctx) if else_stmt else None
 
         ret = IfStmt(expr, main_stmt, else_stmt)
 
@@ -338,7 +324,7 @@ class ASTGeneration(TyCVisitor):
 
     # Visit a parse tree produced by TyCParser#main_if_stat.
     def visitMain_if_stat(self, ctx:TyCParser.Main_if_statContext):
-        stat_ctx = self.visit(ctx.stat())
+        stat_ctx = ctx.stat()
 
         stat = self.visit(stat_ctx) if stat_ctx else None
 
@@ -346,35 +332,67 @@ class ASTGeneration(TyCVisitor):
 
     # Visit a parse tree produced by TyCParser#else_if_stat.
     def visitElse_if_stat(self, ctx:TyCParser.Else_if_statContext):
-        stat_ctx = self.visit(ctx.stat())
+        stat_ctx = ctx.stat()
 
         stat = self.visit(stat_ctx) if stat_ctx else None
 
         return stat
 
-    # Visit a parse tree produced by TyCParser#main_if_stat_list.
-    def visitMain_if_stat_list(self, ctx:TyCParser.Main_if_stat_listContext):
-        stat_list_ctx = self.visit(ctx.stat_list())
-
-        stat_list = self.visit(stat_list_ctx) if stat_list_ctx else None
-
-        return stat_list
-
-    # Visit a parse tree produced by TyCParser#else_if_stat_list.
-    def visitElse_if_stat_list(self, ctx:TyCParser.Else_if_stat_listContext):
-        stat_list_ctx = self.visit(ctx.stat_list())
-
-        stat_list = self.visit(stat_list_ctx) if stat_list_ctx else None
-
-        return stat_list
-
     # Visit a parse tree produced by TyCParser#while_stat.
     def visitWhile_stat(self, ctx:TyCParser.While_statContext):
-        return self.visitChildren(ctx)
+        expr_ctx = ctx.expr()
+        stat_ctx = ctx.stat()
+
+        expr = self.visit(expr_ctx)
+        stat = self.visit(stat_ctx)
+
+        ret = WhileStmt(expr, stat)
+
+        return ret
 
     # Visit a parse tree produced by TyCParser#for_stat.
     def visitFor_stat(self, ctx:TyCParser.For_statContext):
-        return self.visitChildren(ctx)
+        for_init_stat_ctx = ctx.for_init_stat()
+        for_cond_stat_ctx = ctx.for_cond_stat()
+        for_update_stat_ctx = ctx.for_update_stat()
+        stat_ctx = ctx.stat()
+
+        for_init_stat = self.visit(for_init_stat_ctx)
+        for_cond_stat = self.visit(for_cond_stat_ctx)
+        for_update_stat = self.visit(for_update_stat_ctx)
+        stat = self.visit(stat)
+
+        ret = ForStmt(for_init_stat, for_cond_stat, for_update_stat, stat)
+
+        return ret
+
+    # Visit a parse tree produced by TyCParser#for_init_stat.
+    def visitFor_init_stat(self, ctx:TyCParser.For_init_statContext):
+        var_decl_stat_ctx = ctx.var_decl_stat()
+        expr_stat_ctx = ctx.expr_stat()
+
+        var_decl_stat = self.visit(var_decl_stat_ctx) if var_decl_stat_ctx else None
+        expr_stat = self.visit(expr_stat_ctx) if expr_stat_ctx else None
+
+        ret = var_decl_stat if var_decl_stat else expr_stat
+
+        return ret
+
+    # Visit a parse tree produced by TyCParser#for_cond_stat.
+    def visitFor_cond_stat(self, ctx:TyCParser.For_cond_statContext):
+        expr_ctx = ctx.expr()
+
+        expr = self.visit(expr_ctx) else None
+
+        return expr
+
+    # Visit a parse tree produced by TyCParser#for_update_stat.
+    def visitFor_update_stat(self, ctx:TyCParser.For_update_statContext):
+        expr_ctx = ctx.expr()
+
+        expr = self.visit(expr_ctx) else None
+
+        return expr
 
     # Visit a parse tree produced by TyCParser#switch_stat.
     def visitSwitch_stat(self, ctx:TyCParser.Switch_statContext):

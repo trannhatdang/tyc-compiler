@@ -128,11 +128,33 @@ class ASTGeneration(TyCVisitor):
 
     # Visit a parse tree produced by TyCParser#struct_decl.
     def visitStruct_decl(self, ctx:TyCParser.Struct_declContext):
-        return self.visitChildren(ctx)
+        ID_ctx = ctx.ID()
+        struct_var_decl_list_ctx = ctx.struct_var_decl_list()
+
+        ID = ID_ctx
+        struct_var_decl_list = self.visit(struct_var_decl_list)
+
+        ret = StructDecl(ID, struct_var_decl_list)
+
+        return ret
 
     # Visit a parse tree produced by TyCParser#struct_var_decl_list.
     def visitStruct_var_decl_list(self, ctx:TyCParser.Struct_var_decl_listContext):
-        return self.visitChildren(ctx)
+        struct_var_decl_stat_ctx = ctx.struct_var_decl_stat()
+        struct_var_decl_list_ctx = ctx.struct_var_decl_list()
+
+        struct_var_decl_stat = self.visit(struct_var_decl_stat)
+        struct_var_decl_list = self.visit(struct_var_decl_lít)
+
+        ret = []
+
+        if struct_var_decl_stat:
+            ret.append(struct_var_decl_stat)
+
+        if struct_var_decl_list:
+            ret.extend(struct_var_decl_list)
+
+        return ret
 
     # Visit a parse tree produced by TyCParser#struct_var_decl_stat.
     def visitStruct_var_decl_stat(self, ctx:TyCParser.Struct_var_decl_statContext):

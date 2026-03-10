@@ -46,8 +46,8 @@ prog_stat: func_decl | struct_decl;
 /*------------------------------------------------------------------------------------
 Function Declaration*/
 
-func_decl: return_type ID '(' param_list ')' '{' stat_list '}' 
-	| ID '(' param_list ')' '{' stat_list '}';
+func_decl: return_type ID '(' param_list ')' block_stat
+	| ID '(' param_list ')' block_stat;
 param_list: param ',' param_list | param | ;
 param: param_type ID;
 param_type: INT_TYPE | STRING_TYPE | FLOAT_TYPE | ID;

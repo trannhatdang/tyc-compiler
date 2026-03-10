@@ -78,11 +78,16 @@ var_type: INT_TYPE | STRING_TYPE | FLOAT_TYPE | AUTO | ID;
 
 block_stat: '{' stat_list '}' ;
 
-if_stat: IF '(' expr ')' '{' stat_list '}'
-	| IF '(' expr ')' stat
-	| IF '(' expr ')' stat ELSE stat
-	| IF '(' expr ')' '{' stat_list '}' ELSE '{' stat_list '}' 
+if_stat: IF '(' expr ')' '{' main_if_stat_list '}'
+	| IF '(' expr ')' main_if_stat
+	| IF '(' expr ')' main_if_stat ELSE else_if_stat
+	| IF '(' expr ')' '{' main_if_stat_list '}' ELSE '{' else_if_stat_list '}' 
 ;
+
+main_if_stat: stat ;
+else_if_stat: stat ;
+main_if_stat_list: stat_list ;
+else_if_stat_list: stat_list ;
 
 while_stat: WHILE '(' expr ')' '{' stat_list '}'
 	| WHILE '(' expr ')' stat;

@@ -109,6 +109,26 @@ class TyCVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by TyCParser#main_if_stat.
+    def visitMain_if_stat(self, ctx:TyCParser.Main_if_statContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by TyCParser#else_if_stat.
+    def visitElse_if_stat(self, ctx:TyCParser.Else_if_statContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by TyCParser#main_if_stat_list.
+    def visitMain_if_stat_list(self, ctx:TyCParser.Main_if_stat_listContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by TyCParser#else_if_stat_list.
+    def visitElse_if_stat_list(self, ctx:TyCParser.Else_if_stat_listContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by TyCParser#while_stat.
     def visitWhile_stat(self, ctx:TyCParser.While_statContext):
         return self.visitChildren(ctx)

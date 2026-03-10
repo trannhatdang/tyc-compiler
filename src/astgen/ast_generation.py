@@ -103,13 +103,13 @@ class ASTGeneration(TyCVisitor):
         string_type_ctx = ctx.STRING_TYPE()
         ID_type_ctx = ctx.ID()
 
-        if int_type_ctx is not None:
+        if int_type_ctx:
             return IntType()
-        elif float_type_ctx is not None:
+        elif float_type_ctx:
             return FloatType()
-        elif string_type_ctx is not None:
+        elif string_type_ctx:
             return StringType()
-        elif ID_type_ctx is not None:
+        elif ID_type_ctx:
             return StructType(ID_type_ctx)
 
         return None
@@ -158,11 +158,32 @@ class ASTGeneration(TyCVisitor):
 
     # Visit a parse tree produced by TyCParser#struct_var_decl_stat.
     def visitStruct_var_decl_stat(self, ctx:TyCParser.Struct_var_decl_statContext):
-        return self.visitChildren(ctx)
+        struct_var_type_ctx = ctx.struct_var_type()
+        ID_ctx = ctx.ID()
+
+        struct_var_type = self.visit(struct_var_type_ctx)
+        ID = ID_ctx
+
+        ret = MemberDecl(struct_var_type, ID)
+        return ret
 
     # Visit a parse tree produced by TyCParser#struct_var_type.
     def visitStruct_var_type(self, ctx:TyCParser.Struct_var_typeContext):
-        return self.visitChildren(ctx)
+        int_type_ctx = ctx.INT_TYPE()
+        float_type_ctx = ctx.FLOAT_TYPE()
+        string_type_ctx = ctx.STRING_TYPE()
+        ID_type_ctx = ctx.ID()
+
+        if int_type_ctx:
+            ret = IntType()
+        elif float_type_ctx:
+            ret = FloatType()
+        elif string_type_ctx:
+            ret = StringType()
+        else:
+            ret = StructType(ID_type_ctx)
+
+        return ret
 
     # Visit a parse tree produced by TyCParser#stat_list.
     def visitStat_list(self, ctx:TyCParser.Stat_listContext):
@@ -196,43 +217,87 @@ class ASTGeneration(TyCVisitor):
         expr_stat_ctx = ctx.expr_stat()
 
         if var_decl_stat_ctx:
-            ret = VarDecl(self.visit(var_decl_stat_ctx))
+            ret = self.visit(var_decl_stat_ctx)
         elif block_stat_ctx:
-            ret = BlockStmt(self.visit(block_stat_ctx))
+            ret = self.visit(block_stat_ctx)
         elif if_stat_ctx:
-            ret = IfStmt(self.visit(if_stat_ctx))
+            ret = self.visit(if_stat_ctx)
         elif while_stat_ctx:
-            ret = WhileStmt(self.visit(while_stat_ctx))
+            ret = self.visit(while_stat_ctx)
         elif for_stat_ctx:
-            ret = ForStmt(self.visit(for_stat_ctx))
+            ret = self.visit(for_stat_ctx)
         elif switch_stat_ctx:
-            ret = SwitchStmt(self.visit(switch_stat_ctx))
+            ret = self.visit(switch_stat_ctx)
         elif break_stat_ctx:
-            ret = BreakStmt(self.visit(break_stat_ctx))
+            ret = self.visit(break_stat_ctx)
         elif continue_stat_ctx:
-            ret = ContinueStmt(self.visit(continue_stat_ctx))
+            ret = self.visit(continue_stat_ctx)
         elif return_stat_ctx:
-            ret = ReturnStmt(self.visit(return_stat_ctx))
+            ret = self.visit(return_stat_ctx)
         else:
-            ret = ExprStmt(self.visit(expr_stat_ctx))
+            ret = self.visit(expr_stat_ctx)
 
         return ret
 
     # Visit a parse tree produced by TyCParser#var_decl_list.
     def visitVar_decl_list(self, ctx:TyCParser.Var_decl_listContext):
-        return self.visitChildren(ctx)
+        var_decl_stat_ctx = ctx.var_decl_stat()
+        var_decl_list_ctx = ctx.var_decl_list()
+
+        var_decl_stat = self.visit(var_decl_stat_ctx)
+        var_decl_list = self.visit(var_decl_list_ctx)
+
+        ret = []
+
+        if var_decl_stat:
+            ret.append(var_decl_stat)
+
+        if var_decl_list:
+            ret.extend(var_decl_list)
+
+        return ret
 
     # Visit a parse tree produced by TyCParser#var_decl_stat.
     def visitVar_decl_stat(self, ctx:TyCParser.Var_decl_statContext):
-        return self.visitChildren(ctx)
+        var_decl_expr_ctx = ctx.var_decl_expr()
+
+        var_decl_expr = self.visit(var_decl_expr_ctx)
+        return var_decl_expr
 
     # Visit a parse tree produced by TyCParser#var_decl_expr.
     def visitVar_decl_expr(self, ctx:TyCParser.Var_decl_exprContext):
-        return self.visitChildren(ctx)
+        var_type_ctx = ctx.var_type()
+        ID_ctx = ctx.ID()
+        expr_ctx = ctx.expr()
+
+        var_type = self.visit(var_type_ctx)
+        ID = ID_ctx
+        expr = self.visit(expr_ctx) if expr_ctx else None
+
+        ret = VarDecl(var_type, ID, expr)
+
+        return ret
 
     # Visit a parse tree produced by TyCParser#var_type.
     def visitVar_type(self, ctx:TyCParser.Var_typeContext):
-        return self.visitChildren(ctx)
+        int_type_ctx = ctx.INT_TYPE()
+        float_type_ctx = ctx.FLOAT_TYPE()
+        string_type_ctx = ctx.STRING_TYPE()
+        auto_type_ctx = ctx.AUTO()
+        ID_type_ctx = ctx.ID()
+
+        if int_type_ctx:
+            ret = IntType()
+        elif float_type_ctx:
+            ret = FloatType()
+        elif string_type_ctx:
+            ret = StringType()
+        elif ID_type_ctx:
+            ret = StructType(ID_type_ctx)
+        else:
+            ret = None
+
+        return ret
 
     # Visit a parse tree produced by TyCParser#block_stat.
     def visitBlock_stat(self, ctx:TyCParser.Block_statContext):
@@ -245,7 +310,63 @@ class ASTGeneration(TyCVisitor):
 
     # Visit a parse tree produced by TyCParser#if_stat.
     def visitIf_stat(self, ctx:TyCParser.If_statContext):
-        return self.visitChildren(ctx)
+        expr_ctx = ctx.expr()
+        main_if_stat_ctx = ctx.main_if_stat()
+        else_if_stat_ctx = ctx.else_if_stat()
+        main_if_stat_list_ctx = ctx.main_if_stat_list()
+        else_if_stat_list_ctx = ctx.else_if_stat_list()
+
+        expr = self.visit(expr_ctx)
+
+        main_stmt = None
+        else_stmt = None
+
+        if main_if_stat_ctx:
+            main_stmt = self.visit(main_if_stat_ctx)
+        else:
+            main_stmt = self.visit(main_if_stat_list_ctx)
+
+        if else_if_stat:
+            else_stmt = self.visit(else_if_stat_ctx)
+
+        if else_if_stat_list:
+            else_stmt = self.visit(else_if_stat_list_ctx)
+
+        ret = IfStmt(expr, main_stmt, else_stmt)
+
+        return ret
+
+    # Visit a parse tree produced by TyCParser#main_if_stat.
+    def visitMain_if_stat(self, ctx:TyCParser.Main_if_statContext):
+        stat_ctx = self.visit(ctx.stat())
+
+        stat = self.visit(stat_ctx) if stat_ctx else None
+
+        return stat
+
+    # Visit a parse tree produced by TyCParser#else_if_stat.
+    def visitElse_if_stat(self, ctx:TyCParser.Else_if_statContext):
+        stat_ctx = self.visit(ctx.stat())
+
+        stat = self.visit(stat_ctx) if stat_ctx else None
+
+        return stat
+
+    # Visit a parse tree produced by TyCParser#main_if_stat_list.
+    def visitMain_if_stat_list(self, ctx:TyCParser.Main_if_stat_listContext):
+        stat_list_ctx = self.visit(ctx.stat_list())
+
+        stat_list = self.visit(stat_list_ctx) if stat_list_ctx else None
+
+        return stat_list
+
+    # Visit a parse tree produced by TyCParser#else_if_stat_list.
+    def visitElse_if_stat_list(self, ctx:TyCParser.Else_if_stat_listContext):
+        stat_list_ctx = self.visit(ctx.stat_list())
+
+        stat_list = self.visit(stat_list_ctx) if stat_list_ctx else None
+
+        return stat_list
 
     # Visit a parse tree produced by TyCParser#while_stat.
     def visitWhile_stat(self, ctx:TyCParser.While_statContext):

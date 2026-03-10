@@ -378,26 +378,26 @@ class TyCBuilder:
             # Create __init__.py
             (self.build_dir / "__init__.py").touch()
 
-            # Copy Python files
-            lexererr_src = self.root_dir / "src" / "grammar" / "lexererr.py"
-            lexererr_dst = self.build_dir / "lexererr.py"
-            if lexererr_src.exists():
-                shutil.copy2(lexererr_src, lexererr_dst)
-
             # Submissions Folder
             sub1_dir = self.root_dir / "submissions" / "ass_1"
             if not sub1_dir.exists():
                 sub1_dir.mkdir(parents = True, exist_ok=True)
 
+            sub2_dir = self.root_dir / "submissions" / "ass_2"
+            if not sub2_dir.exists():
+                sub2_dir.mkdir(parents = True, exist_ok=True)
+
             shutil.copytree(self.build_dir, sub1_dir, dirs_exist_ok = True)
             shutil.copy2(grammar_files[0], sub1_dir)
 
-            grammar_dir = self.root_dir / "src" / "grammar"
-            lexer_err_file = sub1_dir / "lexererr.py"
-            init_file = sub1_dir / "__init__.py"
-            
-            lexer_err_file.unlink(missing_ok = True)
-            init_file.unlink(missing_ok = True)
+            shutil.copytree(self.build_dir, sub2_dir, dirs_exist_ok = True)
+            shutil.copy2(grammar_files[0], sub2_dir)
+
+            # Copy Python files
+            lexererr_src = self.root_dir / "src" / "grammar" / "lexererr.py"
+            lexererr_dst = self.build_dir / "lexererr.py"
+            if lexererr_src.exists():
+                shutil.copy2(lexererr_src, lexererr_dst)
 
             curr_time = datetime.datetime
 
@@ -571,12 +571,14 @@ class TyCBuilder:
             curr_time = datetime.datetime
             curr_time = str(curr_time.now().strftime('%Y-%m-%d %H-%M-%S'))
 
+            test_dir = str(self.root_dir / "tests" / "test_ast_gen.py")
+
             self.run_command(
                 [
                     str(self.venv_python3),
                     "-m",
                     "pytest",
-                    "tests/test_ast_gen.py",
+                    test_dir,
                     f"--html={ast_report_dir}/test_ast_{curr_time}.html",
                     "--timeout=5",
                     "--self-contained-html",
@@ -591,6 +593,13 @@ class TyCBuilder:
                 )
             )
             self.clean_cache()
+
+            # Submissions Folder
+            sub2_dir = self.root_dir / "submissions" / "ass_2"
+            if not sub2_dir.exists():
+                sub2_dir.mkdir(parents = True, exist_ok=True)
+
+            shutil.copy2(test_dir, sub2_dir)
 
             return
 

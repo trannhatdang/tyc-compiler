@@ -1,4 +1,4 @@
-# Generated from D:/DH/HK252/BTL_PPL/src/grammar/TyC.g4 by ANTLR 4.13.2
+# Generated from D:/DH/HK252/tyc-compiler/src/grammar/TyC.g4 by ANTLR 4.13.2
 from antlr4 import *
 if "." in __name__:
     from .TyCParser import TyCParser
@@ -66,6 +66,11 @@ class TyCVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by TyCParser#struct_var_type.
     def visitStruct_var_type(self, ctx:TyCParser.Struct_var_typeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by TyCParser#struct_lit.
+    def visitStruct_lit(self, ctx:TyCParser.Struct_litContext):
         return self.visitChildren(ctx)
 
 

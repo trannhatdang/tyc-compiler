@@ -59,9 +59,11 @@ Struct Declaration*/
 struct_decl: STRUCT ID ';'
 	| STRUCT ID '{' struct_var_decl_list '}' ';'
 ;
-struct_var_decl_list: struct_var_decl_stat struct_var_decl_list |;
-struct_var_decl_stat: struct_var_type ID ';';
-struct_var_type: INT_TYPE | STRING_TYPE | FLOAT_TYPE | ID;
+
+struct_var_decl_list: struct_var_decl_stat struct_var_decl_list | ;
+struct_var_decl_stat: struct_var_type ID ';' ;
+struct_var_type: INT_TYPE | STRING_TYPE | FLOAT_TYPE | ID ;
+struct_lit: '{' expr_list '}' ;
 
 /*------------------------------------------------------------------------------------
 Statement*/
@@ -105,7 +107,7 @@ break_stat: BREAK ';' ;
 
 continue_stat: CONTINUE ';' ;
 
-return_stat: RETURN expr ';' 
+return_stat: RETURN expr ';'
 	| RETURN ';' ;
 
 expr_stat: (expr | assign_expr) ';';
@@ -113,11 +115,10 @@ expr_stat: (expr | assign_expr) ';';
 /*------------------------------------------------------------------------------------
 Expression*/
 
-lvalue: ID | INT | FLOAT | STRING | BOOL;
+lvalue: ID | INT | FLOAT | STRING | struct_lit;
 
 expr_list: expr COMMA expr_list | expr | ;
 expr: '(' expr ')'
-	| '{' expr_list '}'
 	| lvalue
 	| expr '.' ID
 	| expr post_op
@@ -256,7 +257,6 @@ FLOAT:  ('-')? DIGIT+
 	)
 	| ('-')? '.' DIGIT+ (('E' | 'e') ('-' | '+') DIGIT+)?
 ;
-BOOL: 'true' | 'false' ;
 
 STRING: '"' CHAR*? '"';
 

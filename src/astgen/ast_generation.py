@@ -165,6 +165,17 @@ class ASTGeneration(TyCVisitor):
         ID = ID_ctx
 
         ret = MemberDecl(struct_var_type, ID)
+
+        return ret
+
+    # Visit a parse tree produced by TyCParser#struct_lit.
+    def visitStruct_lit(self, ctx:TyCParser.Struct_litContext):
+        expr_list_ctx = ctx.expr_list()
+
+        expr_list = self.visit(expr_list_ctx)
+
+        ret = StructLit(expr_list)
+
         return ret
 
     # Visit a parse tree produced by TyCParser#struct_var_type.
@@ -382,7 +393,7 @@ class ASTGeneration(TyCVisitor):
     def visitFor_cond_stat(self, ctx:TyCParser.For_cond_statContext):
         expr_ctx = ctx.expr()
 
-        expr = self.visit(expr_ctx) else None
+        expr = self.visit(expr_ctx) if expr_ctx else None
 
         return expr
 
@@ -390,45 +401,112 @@ class ASTGeneration(TyCVisitor):
     def visitFor_update_stat(self, ctx:TyCParser.For_update_statContext):
         expr_ctx = ctx.expr()
 
-        expr = self.visit(expr_ctx) else None
+        expr = self.visit(expr_ctx) if expr_ctx else None
 
         return expr
 
     # Visit a parse tree produced by TyCParser#switch_stat.
     def visitSwitch_stat(self, ctx:TyCParser.Switch_statContext):
-        return self.visitChildren(ctx)
+        expr_ctx = ctx.expr()
+        case_expr_list_ctx = ctx.case_expr_list()
+        default_case_expr_ctx = ctx.default_case_expr()
+
+        expr = self.visit(expr_ctx)
+        case_expr_list = self.visit(case_expr_list_ctx)
+        default_case_expr = self.visit(default_case_expr_ctx)
+
+        ret = SwitchStmt(expr, case_expr_list, default_case_expr)
+
+        return ret
 
     # Visit a parse tree produced by TyCParser#case_expr_list.
     def visitCase_expr_list(self, ctx:TyCParser.Case_expr_listContext):
-        return self.visitChildren(ctx)
+        case_expr_ctx = ctx.case_expr()
+        case_expr_list_ctx = ctx.case_expr_list()
+
+        case_expr = self.visit(case_expr) if case_expr_ctx else None
+        case_expr_list = self.visit(case_expr_list_ctx) if case_expr_list_ctx else None
+
+        ret = []
+
+        if case_expr:
+            ret.append(case_expr)
+
+        if case_expr_list:
+            ret.extend(case_expr_list)
+
+        return ret
 
     # Visit a parse tree produced by TyCParser#case_expr.
     def visitCase_expr(self, ctx:TyCParser.Case_exprContext):
-        return self.visitChildren(ctx)
+        expr_ctx = ctx.expr()
+        stat_list_ctx = ctx.stat_list()
+
+        expr = self.visit(expr_ctx)
+        stat_list = self.visit(stat_list_ctx)
+
+        ret = CaseStmt(expr, stat_list)
+        return ret
 
     # Visit a parse tree produced by TyCParser#default_case_expr.
     def visitDefault_case_expr(self, ctx:TyCParser.Default_case_exprContext):
-        return self.visitChildren(ctx)
+        stat_list_ctx = ctx.stat_list()
+
+        stat_list = self.visit(stat_list_ctx) if stat_list_ctx else None
+
+        ret = DefaultStmt(stat_list)
+
+        return ret
 
     # Visit a parse tree produced by TyCParser#break_stat.
     def visitBreak_stat(self, ctx:TyCParser.Break_statContext):
-        return self.visitChildren(ctx)
+        return BreakStmt()
 
     # Visit a parse tree produced by TyCParser#continue_stat.
     def visitContinue_stat(self, ctx:TyCParser.Continue_statContext):
-        return self.visitChildren(ctx)
+        return ContinueStmt()
 
     # Visit a parse tree produced by TyCParser#return_stat.
     def visitReturn_stat(self, ctx:TyCParser.Return_statContext):
-        return self.visitChildren(ctx)
+        expr_ctx = ctx.expr()
+
+        expr = self.visit(expr_ctx) if expr_ctx else None
+
+        ret = ReturnStmt(expr)
+
+        return ret
 
     # Visit a parse tree produced by TyCParser#expr_stat.
     def visitExpr_stat(self, ctx:TyCParser.Expr_statContext):
-        return self.visitChildren(ctx)
+        expr_ctx = ctx.expr()
+        assign_expr_ctx = ctx.assign_expr()
+
+        expr = self.visit(expr_ctx) if expr_ctx else None
+        assign_expr = self.visit(assign_expr_ctx) if assign_expr_ctx else None
+
+        ret = ExprStmt(expr) if expr else ExprStmt(assign_expr)
+        return ret
 
     # Visit a parse tree produced by TyCParser#lvalue.
     def visitLvalue(self, ctx:TyCParser.LvalueContext):
-        return self.visitChildren(ctx)
+        int_lit = ctx.INT()
+        float_lit = ctx.FLOAT()
+        string_lit = ctx.STRING()
+        id_lit = ctx.ID()
+        struct_lit = ctx.struct_lit()
+
+        if int_lit:
+            ret = IntLiteral(int_lit)
+        elif float_lit:
+            ret = FloatLiteral(float_lit)
+        elif string_lit:
+            ret = StringLiteral(string_lit)
+        elif struct_lit:
+            ret = self.visit(struct_lit)
+        else:
+            ret = Identifier(id_lit)
+
+        return ret
 
     # Visit a parse tree produced by TyCParser#expr_list.
     def visitExpr_list(self, ctx:TyCParser.Expr_listContext):

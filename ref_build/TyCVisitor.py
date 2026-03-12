@@ -209,13 +209,8 @@ class TyCVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by TyCParser#inc_expr.
-    def visitInc_expr(self, ctx:TyCParser.Inc_exprContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by TyCParser#dec_expr.
-    def visitDec_expr(self, ctx:TyCParser.Dec_exprContext):
+    # Visit a parse tree produced by TyCParser#assigned_expr.
+    def visitAssigned_expr(self, ctx:TyCParser.Assigned_exprContext):
         return self.visitChildren(ctx)
 
 

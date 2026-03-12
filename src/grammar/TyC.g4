@@ -125,16 +125,16 @@ expr: '(' expr ')'
 	| expr '(' arg_list ')'
 	| pre_op expr
 	| un_op expr
-	| expr (MULT_OP | DIV_OP | MOD_OP) expr
-	| expr (ADD_OP | MIN_OP) expr
-	| expr (LESS_OP | LEQ_OP | GREAT_OP | GEQ_OP) expr
-	| expr (EQ_OP | NEQ_OP) expr
-	| expr AND_OP expr
-	| expr OR_OP expr
+	| expr bin_op expr
+	// | expr (MULT_OP | DIV_OP | MOD_OP) expr
+	// | expr (ADD_OP | MIN_OP) expr
+	// | expr (LESS_OP | LEQ_OP | GREAT_OP | GEQ_OP) expr
+	// | expr (EQ_OP | NEQ_OP) expr
+	// | expr AND_OP expr
+	// | expr OR_OP expr
 ;
 
-assign_expr: (ID | expr '.' ID) '=' expr 
-	| (ID | expr '.' ID) '=' '{' expr_list '}';
+assign_expr: (ID | expr '.' ID) '=' expr ;
 
 inc_expr: '++'ID | ID'++' ;
 dec_expr: '--'ID | ID'--' ;
@@ -151,7 +151,13 @@ arg: expr;
 /*------------------------------------------------------------------------------------
 Operators*/
 
-bin_op: ADD_OP | MIN_OP | EQ_OP | NEQ_OP | LESS_OP | GREAT_OP | LEQ_OP | GEQ_OP | OR_OP | AND_OP | MULT_OP | DIV_OP | MOD_OP ;
+bin_op: (MULT_OP | DIV_OP | MOD_OP)
+	| (ADD_OP | MIN_OP)
+	| (LESS_OP | LEQ_OP | GREAT_OP | GEQ_OP)
+	| (EQ_OP | NEQ_OP)
+	| AND_OP
+	| OR_OP
+;
 
 un_op: NOT_OP | MIN_OP | ADD_OP ;
 

@@ -481,11 +481,12 @@ class ASTGeneration(TyCVisitor):
         expr_ctx = ctx.expr()
         assign_expr_ctx = ctx.assign_expr()
 
-        expr = self.visit(expr_ctx) if expr_ctx else None
-        assign_expr = self.visit(assign_expr_ctx) if assign_expr_ctx else None
-
-        ret = ExprStmt(expr) if expr else ExprStmt(assign_expr)
-        return ret
+        if expr_ctx:
+            expr = self.visit(expr_ctx)
+            return ExprStmt(expr)
+        else:
+            assign_expr = self.visit(assign_expr_ctx)
+            return ExprStmt(assign_expr)
 
     # Visit a parse tree produced by TyCParser#lvalue.
     def visitLvalue(self, ctx:TyCParser.LvalueContext):
@@ -510,11 +511,69 @@ class ASTGeneration(TyCVisitor):
 
     # Visit a parse tree produced by TyCParser#expr_list.
     def visitExpr_list(self, ctx:TyCParser.Expr_listContext):
-        return self.visitChildren(ctx)
+        expr_ctx = ctx.expr()
+        expr_list_ctx = ctx.expr_list()
+
+        expr = self.visit(expr_ctx) if expr_ctx else None
+        expr_list = self.visit(expr_list_ctx) if expr_list_ctx else None
+
+        ret = []
+
+        if expr:
+            ret.append(expr)
+
+        if expr_list:
+            ret.extend(expr_list)
+
+        return ret
 
     # Visit a parse tree produced by TyCParser#expr.
     def visitExpr(self, ctx:TyCParser.ExprContext):
-        return self.visitChildren(ctx)
+        expr_ctx = ctx.expr()
+        arg_list_ctx = ctx.arg_list()
+
+        expr = self.visit(expr_ctx)
+        arg_list = self.visit(arg_list_ctx) if arg_list_ctx else None
+        LROUND_BRACK = ctx.LROUND_BRACK()
+
+        if LROUND_BRACK and arg_list:
+            return FuncCall(expr, arg_list)
+        elif LROUND_BRACK:
+            return Expr(expr)
+
+        MEMACC_OP = ctx.MEMACC_OP()
+
+        if MEMACC_OP:
+            ID = ctx.ID()
+            return MemberAccess(expr, ID)
+
+        post_op_ctx = ctx.post_op()
+
+        if post_op_ctx:
+            post_op = self.visit(post_op_ctx)
+            return PostfixOp(expr)
+
+        pre_op_ctx = ctx.pre_op()
+
+        if pre_op_ctx:
+            pre_op = self.visit(pre_op_ctx)
+            return PrefixOp(expr)
+
+        un_op_ctx = ctx.un_op()
+
+        if un_op_ctx:
+            un_op = self.visit(un_op_ctx)
+            return PrefixOp(expr)
+
+        bin_op_ctx = ctx.bin_op()
+
+        if bin_op_ctx:
+            bin_op = self.visit(bin_op)
+            return BinOp(expr)
+
+        lvalue_ctx = ctx.lvalue()
+
+        return self.visit(lvalue_ctx)
 
     # Visit a parse tree produced by TyCParser#assign_expr.
     def visitAssign_expr(self, ctx:TyCParser.Assign_exprContext):
@@ -536,9 +595,9 @@ class ASTGeneration(TyCVisitor):
     def visitArg(self, ctx:TyCParser.ArgContext):
         return self.visitChildren(ctx)
 
-    # Visit a parse tree produced by TyCParser#bin_op.
-    def visitBin_op(self, ctx:TyCParser.Bin_opContext):
-        return self.visitChildren(ctx)
+    # # Visit a parse tree produced by TyCParser#bin_op.
+    # def visitBin_op(self, ctx:TyCParser.Bin_opContext):
+    #     return self.visitChildren(ctx)
 
     # Visit a parse tree produced by TyCParser#un_op.
     def visitUn_op(self, ctx:TyCParser.Un_opContext):

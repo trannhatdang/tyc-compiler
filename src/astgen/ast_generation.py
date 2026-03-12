@@ -551,25 +551,25 @@ class ASTGeneration(TyCVisitor):
 
         if post_op_ctx:
             post_op = self.visit(post_op_ctx)
-            return PostfixOp(expr)
+            return PostfixOp(post_op, expr)
 
         pre_op_ctx = ctx.pre_op()
 
         if pre_op_ctx:
             pre_op = self.visit(pre_op_ctx)
-            return PrefixOp(expr)
+            return PrefixOp(pre_op, expr)
 
         un_op_ctx = ctx.un_op()
 
         if un_op_ctx:
             un_op = self.visit(un_op_ctx)
-            return PrefixOp(expr)
+            return PrefixOp(un_op, expr)
 
         bin_op_ctx = ctx.bin_op()
 
         if bin_op_ctx:
             bin_op = self.visit(bin_op)
-            return BinOp(expr)
+            return BinOp(bin_op, expr)
 
         lvalue_ctx = ctx.lvalue()
 
@@ -577,27 +577,43 @@ class ASTGeneration(TyCVisitor):
 
     # Visit a parse tree produced by TyCParser#assign_expr.
     def visitAssign_expr(self, ctx:TyCParser.Assign_exprContext):
-        return self.visitChildren(ctx)
+        ID = ctx.ID()
+        expr = self.visit(ctx.expr())
+        assigned_expr_ctx = ctx.assigned_expr()
 
-    # Visit a parse tree produced by TyCParser#inc_expr.
-    def visitInc_expr(self, ctx:TyCParser.Inc_exprContext):
-        return self.visitChildren(ctx)
+        if assigned_expr_ctx:
+            assigned_expr = self.visit(assigned_expr_ctx)
+            mem_acc = MemberAccess(assigned_expr, ID)
 
-    # Visit a parse tree produced by TyCParser#dec_expr.
-    def visitDec_expr(self, ctx:TyCParser.Dec_exprContext):
-        return self.visitChildren(ctx)
+            return AssignOp(mem_acc, expr)
+
+        return AssignOp(ID, expr)
 
     # Visit a parse tree produced by TyCParser#arg_list.
     def visitArg_list(self, ctx:TyCParser.Arg_listContext):
-        return self.visitChildren(ctx)
+        arg_ctx = ctx.arg()
+        arg_list_ctx = ctx.arg_list()
+
+        arg = self.visit(arg_ctx) if arg_ctx else None
+        arg_list = self.visit(arg_list_ctx) if arg_list_ctx else None
+
+        ret = []
+
+        if arg:
+            ret.append(ret)
+
+        if arg_list:
+            ret.extend(ret)
+
+        return ret
 
     # Visit a parse tree produced by TyCParser#arg.
     def visitArg(self, ctx:TyCParser.ArgContext):
-        return self.visitChildren(ctx)
+        return self.visit(ctx.expr())
 
-    # # Visit a parse tree produced by TyCParser#bin_op.
-    # def visitBin_op(self, ctx:TyCParser.Bin_opContext):
-    #     return self.visitChildren(ctx)
+    # Visit a parse tree produced by TyCParser#bin_op.
+    def visitBin_op(self, ctx:TyCParser.Bin_opContext):
+        return self.visitChildren(ctx)
 
     # Visit a parse tree produced by TyCParser#un_op.
     def visitUn_op(self, ctx:TyCParser.Un_opContext):

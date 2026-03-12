@@ -126,18 +126,10 @@ expr: '(' expr ')'
 	| pre_op expr
 	| un_op expr
 	| expr bin_op expr
-	// | expr (MULT_OP | DIV_OP | MOD_OP) expr
-	// | expr (ADD_OP | MIN_OP) expr
-	// | expr (LESS_OP | LEQ_OP | GREAT_OP | GEQ_OP) expr
-	// | expr (EQ_OP | NEQ_OP) expr
-	// | expr AND_OP expr
-	// | expr OR_OP expr
 ;
 
-assign_expr: (ID | expr '.' ID) '=' expr ;
-
-inc_expr: '++'ID | ID'++' ;
-dec_expr: '--'ID | ID'--' ;
+assign_expr: (ID | assigned_expr '.' ID) '=' expr ;
+assigned_expr: expr ;
 
 /*------------------------------------------------------------------------------------
 Argument*/

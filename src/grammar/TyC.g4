@@ -68,7 +68,7 @@ struct_lit: '{' expr_list '}' ;
 /*------------------------------------------------------------------------------------
 Statement*/
 stat_list: stat stat_list | ;
-stat: var_decl_stat | block_stat | if_stat | while_stat | for_stat | switch_stat 
+stat: var_decl_stat | block_stat | if_stat | while_stat | for_stat | switch_stat
 	| break_stat | continue_stat | return_stat | expr_stat;
 
 var_decl_list: var_decl_stat var_decl_list | ;

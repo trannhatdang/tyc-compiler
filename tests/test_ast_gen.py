@@ -24,7 +24,6 @@ def test_ast_gen_placeholder_1():
     expected = "Program([StructDecl(Point, [MemberDecl(IntType(), x), MemberDecl(IntType(), y)])])"
     assert str(ASTGenerator(source).generate()) == expected
 
-
 def test_ast_gen_placeholder_2():
     source = """
         int add(int x, int y) {

@@ -26,16 +26,15 @@ class ASTGeneration(TyCVisitor):
         prog_stat_list_ctx = ctx.prog_stat_list()
         prog_stat_ctx = ctx.prog_stat()
 
-        next_prog_stat_list = self.visit(prog_stat_list_ctx) if prog_stat_list_ctx is not None else None
-        prog_stat = self.visit(prog_stat_ctx) if prog_stat_ctx is not None else None
+        next_prog_stat_list = self.visit(prog_stat_list_ctx) if prog_stat_list_ctx else None
+        prog_stat = self.visit(prog_stat_ctx) if prog_stat_ctx else None
 
         decls = []
 
-        if prog_stat is not None:
+        if prog_stat:
             decls.append(prog_stat)
 
-
-        if next_prog_stat_list is not None:
+        if next_prog_stat_list:
             decls.extend(next_prog_stat_list)
 
         return decls
@@ -45,10 +44,11 @@ class ASTGeneration(TyCVisitor):
         func_decl_ctx = ctx.func_decl()
         struct_decl_ctx = ctx.struct_decl()
 
-        func_decl = self.visit(func_decl_ctx) if func_decl_ctx is not None else None
-        struct_decl = self.visit(struct_decl_ctx) if struct_decl_ctx is not None else None
+        func_decl = self.visit(func_decl_ctx) if func_decl_ctx else None
+        struct_decl = self.visit(struct_decl_ctx) if struct_decl_ctx else None
 
-        stat = func_decl if func_decl is not None else struct_decl
+        stat = func_decl if func_decl else struct_decl
+
         return stat
 
     # Visit a parse tree produced by TyCParser#func_decl.
@@ -63,23 +63,24 @@ class ASTGeneration(TyCVisitor):
         param_list = self.visit(param_list_ctx)
         block_stat = self.visit(block_stat_ctx)
 
-        func_decl = FuncDecl(return_type, ID, param_list, block_stat)
-        return func_decl
+        ret = FuncDecl(return_type, ID, param_list, block_stat)
+
+        return ret
 
     # Visit a parse tree produced by TyCParser#param_list.
     def visitParam_list(self, ctx:TyCParser.Param_listContext):
         param_list_ctx = ctx.param_list()
         param_ctx = ctx.param()
 
-        param_list = self.visit(param_list_ctx) if param_list_ctx is not None else None
-        param = self.visit(param_ctx) if param_ctx is not None else None
+        param_list = self.visit(param_list_ctx) if param_list_ctx else None
+        param = self.visit(param_ctx) if param_ctx else None
 
         ret = []
 
-        if param is not None:
+        if param:
             ret.append(param)
 
-        if param_list is not None:
+        if param_list:
             ret.extend(param_list)
 
         return ret
@@ -132,7 +133,7 @@ class ASTGeneration(TyCVisitor):
         struct_var_decl_list_ctx = ctx.struct_var_decl_list()
 
         ID = ID_ctx
-        struct_var_decl_list = self.visit(struct_var_decl_list)
+        struct_var_decl_list = self.visit(struct_var_decl_list_ctx) if struct_var_decl_list_ctx else None
 
         ret = StructDecl(ID, struct_var_decl_list)
 
@@ -143,8 +144,8 @@ class ASTGeneration(TyCVisitor):
         struct_var_decl_stat_ctx = ctx.struct_var_decl_stat()
         struct_var_decl_list_ctx = ctx.struct_var_decl_list()
 
-        struct_var_decl_stat = self.visit(struct_var_decl_stat)
-        struct_var_decl_list = self.visit(struct_var_decl_lít)
+        struct_var_decl_stat = self.visit(struct_var_decl_stat_ctx) if struct_var_decl_stat_ctx else None
+        struct_var_decl_list = self.visit(struct_var_decl_list_ctx) if struct_var_decl_list_ctx else None
 
         ret = []
 
@@ -206,10 +207,10 @@ class ASTGeneration(TyCVisitor):
 
         ret = []
 
-        if stat is not None:
+        if stat:
             ret.append(stat)
 
-        if stat_list is not None:
+        if stat_list:
             ret.extend(stat_list)
 
         return ret
@@ -228,27 +229,33 @@ class ASTGeneration(TyCVisitor):
         expr_stat_ctx = ctx.expr_stat()
 
         if var_decl_stat_ctx:
-            ret = self.visit(var_decl_stat_ctx)
-        elif block_stat_ctx:
-            ret = self.visit(block_stat_ctx)
-        elif if_stat_ctx:
-            ret = self.visit(if_stat_ctx)
-        elif while_stat_ctx:
-            ret = self.visit(while_stat_ctx)
-        elif for_stat_ctx:
-            ret = self.visit(for_stat_ctx)
-        elif switch_stat_ctx:
-            ret = self.visit(switch_stat_ctx)
-        elif break_stat_ctx:
-            ret = self.visit(break_stat_ctx)
-        elif continue_stat_ctx:
-            ret = self.visit(continue_stat_ctx)
-        elif return_stat_ctx:
-            ret = self.visit(return_stat_ctx)
-        else:
-            ret = self.visit(expr_stat_ctx)
+            return self.visit(var_decl_stat_ctx)
 
-        return ret
+        if block_stat_ctx:
+            return self.visit(block_stat_ctx)
+
+        if if_stat_ctx:
+            return self.visit(if_stat_ctx)
+
+        if while_stat_ctx:
+            return self.visit(while_stat_ctx)
+
+        if for_stat_ctx:
+            return self.visit(for_stat_ctx)
+
+        if switch_stat_ctx:
+            return self.visit(switch_stat_ctx)
+
+        if break_stat_ctx:
+            return self.visit(break_stat_ctx)
+
+        if continue_stat_ctx:
+            return self.visit(continue_stat_ctx)
+
+        if return_stat_ctx:
+            return self.visit(return_stat_ctx)
+
+        return self.visit(expr_stat_ctx)
 
     # Visit a parse tree produced by TyCParser#var_decl_list.
     def visitVar_decl_list(self, ctx:TyCParser.Var_decl_listContext):
@@ -317,6 +324,7 @@ class ASTGeneration(TyCVisitor):
         stat_list = self.visit(stat_list_ctx) if stat_list_ctx else None
 
         ret = BlockStmt(stat_list)
+
         return ret
 
     # Visit a parse tree produced by TyCParser#if_stat.

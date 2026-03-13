@@ -550,10 +550,10 @@ class ASTGeneration(TyCVisitor):
         arg_list = self.visit(arg_list_ctx) if arg_list_ctx else None
         LROUND_BRACK = ctx.LROUND_BRACK()
 
-        if LROUND_BRACK and arg_list:
+        if LROUND_BRACK is not None and arg_list is not None:
             return FuncCall(expr, arg_list)
         elif LROUND_BRACK:
-            return Expr(expr)
+            return self.visit(expr_ctx)
 
         MEMACC_OP = ctx.MEMACC_OP()
 
@@ -582,7 +582,6 @@ class ASTGeneration(TyCVisitor):
         bin_op_ctx = ctx.bin_op()
 
         bin_op = self.visit(bin_op_ctx)
-        print(bin_op_ctx)
         r_bin_expr = self.visit(ctx.r_bin_expr())
         return BinaryOp(expr, bin_op, r_bin_expr)
 

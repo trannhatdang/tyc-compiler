@@ -624,17 +624,16 @@ class ASTGeneration(TyCVisitor):
 
     # Visit a parse tree produced by TyCParser#bin_op.
     def visitBin_op(self, ctx:TyCParser.Bin_opContext):
-        return self.visitChildren(ctx)
+        return ctx.children[0]
 
     # Visit a parse tree produced by TyCParser#un_op.
     def visitUn_op(self, ctx:TyCParser.Un_opContext):
-        return self.visitChildren(ctx)
+        return ctx.children[0]
 
     # Visit a parse tree produced by TyCParser#pre_op.
     def visitPre_op(self, ctx:TyCParser.Pre_opContext):
-        return self.visitChildren(ctx)
+        return ctx.children[0]
 
     # Visit a parse tree produced by TyCParser#post_op.
     def visitPost_op(self, ctx:TyCParser.Post_opContext):
-        return self.visitChildren(ctx)
-    pass
+        return ctx.children[0]

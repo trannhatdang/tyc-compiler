@@ -121,7 +121,7 @@ def test_func_5():
 def test_func_6():
     source = "void main() { fun(2, 5, fun(), 3 + 5, fun.mandy, fun.mandy + 4 * 21); }"
     assert Parser(source).parse() == "success"
-    
+
 def test_func_7():
     source = "void main() { fun(clock, ++3, 3++, f++, --g, g--, smearing_bunny); }"
     assert Parser(source).parse() == "success"

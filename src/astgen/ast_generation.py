@@ -335,7 +335,7 @@ class ASTGeneration(TyCVisitor):
 
         expr = self.visit(expr_ctx)
         main_stmt = self.visit(main_if_stat_ctx)
-        else_stmt = self.visit(else_if_stat_ctx) if else_stmt else None
+        else_stmt = self.visit(else_if_stat_ctx) if else_if_stat_ctx else None
 
         ret = IfStmt(expr, main_stmt, else_stmt)
 
@@ -551,7 +551,6 @@ class ASTGeneration(TyCVisitor):
         LROUND_BRACK = ctx.LROUND_BRACK()
 
         if LROUND_BRACK is not None and arg_list is not None:
-            print(arg_list)
             return FuncCall(expr, arg_list)
         elif LROUND_BRACK:
             return self.visit(expr_ctx)
@@ -596,9 +595,9 @@ class ASTGeneration(TyCVisitor):
             assigned_expr = self.visit(assigned_expr_ctx)
             mem_acc = MemberAccess(assigned_expr, ID)
 
-            return AssignOp(mem_acc, expr)
+            return AssignExpr(mem_acc, expr)
 
-        return AssignOp(ID, expr)
+        return AssignExpr(ID, expr)
 
     # Visit a parse tree produced by TyCParser#arg_list.
     def visitArg_list(self, ctx:TyCParser.Arg_listContext):

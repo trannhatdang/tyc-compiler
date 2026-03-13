@@ -551,6 +551,7 @@ class ASTGeneration(TyCVisitor):
         LROUND_BRACK = ctx.LROUND_BRACK()
 
         if LROUND_BRACK is not None and arg_list is not None:
+            print(arg_list)
             return FuncCall(expr, arg_list)
         elif LROUND_BRACK:
             return self.visit(expr_ctx)
@@ -610,10 +611,10 @@ class ASTGeneration(TyCVisitor):
         ret = []
 
         if arg:
-            ret.append(ret)
+            ret.append(arg)
 
         if arg_list:
-            ret.extend(ret)
+            ret.extend(arg_list)
 
         return ret
 

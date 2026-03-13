@@ -53,7 +53,7 @@ def test_ast_gen_placeholder_4():
 
 def test_func_1():
     source = "void fun() {} void main() { fun(); }"
-    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([]))])"
+    expected = "Program([FuncDecl(VoidType(), fun, [], BlockStmt([])), FuncDecl(VoidType(), main, [], BlockStmt([ExprStmt(FuncCall(Identifier(fun), []))]))])"
     assert str(ASTGenerator(source).generate()) == expected
 
 def test_func_2():
@@ -78,5 +78,5 @@ def test_func_5():
 
 def test_func_6():
     source = "void main() { fun(clock, ++3, 3++, f++, --g, g--, smearing_bunny); }"
-    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([VarDecl(auto, x = IntLiteral(10))]))])"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([ExprStmt(FuncCall(Identifier(fun), [[[...], [...]], [[...], [...]]]))]))])"
     assert str(ASTGenerator(source).generate()) == expected

@@ -538,6 +538,12 @@ class ASTGeneration(TyCVisitor):
     # Visit a parse tree produced by TyCParser#expr.
     def visitExpr(self, ctx:TyCParser.ExprContext):
         expr_ctx = ctx.expr()
+
+        if not expr_ctx:
+            lvalue_ctx = ctx.lvalue()
+
+            return self.visit(lvalue_ctx)
+
         arg_list_ctx = ctx.arg_list()
 
         expr = self.visit(expr_ctx)
@@ -575,13 +581,10 @@ class ASTGeneration(TyCVisitor):
 
         bin_op_ctx = ctx.bin_op()
 
-        if bin_op_ctx:
-            bin_op = self.visit(bin_op)
-            return BinOp(bin_op, expr)
-
-        lvalue_ctx = ctx.lvalue()
-
-        return self.visit(lvalue_ctx)
+        bin_op = self.visit(bin_op_ctx)
+        print(bin_op_ctx)
+        r_bin_expr = self.visit(ctx.r_bin_expr())
+        return BinaryOp(expr, bin_op, r_bin_expr)
 
     # Visit a parse tree produced by TyCParser#assign_expr.
     def visitAssign_expr(self, ctx:TyCParser.Assign_exprContext):

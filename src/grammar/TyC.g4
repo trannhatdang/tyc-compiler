@@ -125,8 +125,11 @@ expr: '(' expr ')'
 	| expr '(' arg_list ')'
 	| pre_op expr
 	| un_op expr
-	| expr bin_op expr
+	| expr bin_op r_bin_expr
 ;
+
+r_bin_expr: expr ;
+
 
 assign_expr: (ID | assigned_expr '.' ID) '=' expr ;
 assigned_expr: expr ;

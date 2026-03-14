@@ -175,7 +175,7 @@ class ASTGeneration(TyCVisitor):
 
         expr_list = self.visit(expr_list_ctx)
 
-        ret = StructLit(expr_list)
+        ret = StructLiteral(expr_list)
 
         return ret
 
@@ -379,7 +379,7 @@ class ASTGeneration(TyCVisitor):
         for_init_stat = self.visit(for_init_stat_ctx)
         for_cond_stat = self.visit(for_cond_stat_ctx)
         for_update_stat = self.visit(for_update_stat_ctx)
-        stat = self.visit(stat)
+        stat = self.visit(stat_ctx)
 
         ret = ForStmt(for_init_stat, for_cond_stat, for_update_stat, stat)
 
@@ -387,7 +387,7 @@ class ASTGeneration(TyCVisitor):
 
     # Visit a parse tree produced by TyCParser#for_init_stat.
     def visitFor_init_stat(self, ctx:TyCParser.For_init_statContext):
-        var_decl_stat_ctx = ctx.var_decl_stat()
+        var_decl_stat_ctx = ctx.var_decl_expr()
         expr_stat_ctx = ctx.expr_stat()
 
         var_decl_stat = self.visit(var_decl_stat_ctx) if var_decl_stat_ctx else None
@@ -432,7 +432,7 @@ class ASTGeneration(TyCVisitor):
         case_expr_ctx = ctx.case_expr()
         case_expr_list_ctx = ctx.case_expr_list()
 
-        case_expr = self.visit(case_expr) if case_expr_ctx else None
+        case_expr = self.visit(case_expr_ctx) if case_expr_ctx else None
         case_expr_list = self.visit(case_expr_list_ctx) if case_expr_list_ctx else None
 
         ret = []

@@ -542,7 +542,7 @@ def test_for_13():
 def test_for_14():
     source = "void main() {for(; i < 10; ) korean_crane_carrier();}"
     assert Parser(source).parse() == "success"
-    
+
 def test_for_15():
     source = "void main() {for(; ; i++) korean_crane_carrier();}"
     assert Parser(source).parse() == "success"
@@ -574,7 +574,7 @@ def test_for_21():
 def test_for_22():
     source = "void main() {for(; i < 10; ) korean_crane_carrier();}"
     assert Parser(source).parse() == "success"
-    
+
 def test_for_23():
     source = "void main() {for(; ; --i) korean_crane_carrier();}"
     assert Parser(source).parse() == "success"
@@ -770,7 +770,7 @@ def test_exp_22():
 def test_exp_23():
     source = "void main() { a = (a + b); }"
     assert Parser(source).parse() == "success"
-    
+
 def test_exp_24():
     source = "void main() { a = (a + b) * c; }"
     assert Parser(source).parse() == "success"
@@ -778,7 +778,7 @@ def test_exp_24():
 def test_exp_25():
     source = "void main() { a = (a + b) * c / 5; }"
     assert Parser(source).parse() == "success"
-    
+
 def test_exp_26():
     source = "void main() { a = (a + (b - 3) / 5 % 20 * 10) * (c / 5); }"
     assert Parser(source).parse() == "success"

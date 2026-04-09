@@ -173,22 +173,22 @@ def test_exp_24():
 
 def test_exp_25():
     source = "void main() { a = (a + b) * c / 5; }"
-    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([ExprStmt(AssignExpr(a = BinaryOp(BinaryOp(Identifier(a), +, Identifier(b)), *, BinaryOp(Identifier(c), /, IntLiteral(5)))))]))])"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([ExprStmt(AssignExpr(a = BinaryOp(BinaryOp(BinaryOp(Identifier(a), +, Identifier(b)), *, Identifier(c)), /, IntLiteral(5))))]))])"
     assert str(ASTGenerator(source).generate()) == expected
 
 def test_exp_26():
     source = "void main() { a = (a + (b - 3) / 5 % 20 * 10) * (c / 5); }"
-    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([ExprStmt(AssignExpr(a = BinaryOp(BinaryOp(Identifier(a), +, BinaryOp(BinaryOp(Identifier(b), -, IntLiteral(3)), /, BinaryOp(IntLiteral(5), %, BinaryOp(IntLiteral(20), *, IntLiteral(10))))), *, BinaryOp(Identifier(c), /, IntLiteral(5)))))]))])"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([ExprStmt(AssignExpr(a = BinaryOp(BinaryOp(Identifier(a), +, BinaryOp(BinaryOp(BinaryOp(BinaryOp(Identifier(b), -, IntLiteral(3)), /, IntLiteral(5)), %, IntLiteral(20)), *, IntLiteral(10))), *, BinaryOp(Identifier(c), /, IntLiteral(5)))))]))])"
     assert str(ASTGenerator(source).generate()) == expected
 
 def test_exp_27():
     source = "void main() { a = (a + (b - 3) / 5 % 20 * 10) * (c / 5) * -25 + b++ * 25; }"
-    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([ExprStmt(AssignExpr(a = BinaryOp(BinaryOp(Identifier(a), +, BinaryOp(BinaryOp(Identifier(b), -, IntLiteral(3)), /, BinaryOp(IntLiteral(5), %, BinaryOp(IntLiteral(20), *, IntLiteral(10))))), *, BinaryOp(BinaryOp(Identifier(c), /, IntLiteral(5)), *, BinaryOp(IntLiteral(-25), +, BinaryOp(PostfixOp(Identifier(b)++), *, IntLiteral(25)))))))]))])"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([ExprStmt(AssignExpr(a = BinaryOp(BinaryOp(BinaryOp(BinaryOp(Identifier(a), +, BinaryOp(BinaryOp(BinaryOp(BinaryOp(Identifier(b), -, IntLiteral(3)), /, IntLiteral(5)), %, IntLiteral(20)), *, IntLiteral(10))), *, BinaryOp(Identifier(c), /, IntLiteral(5))), *, IntLiteral(-25)), +, BinaryOp(PostfixOp(Identifier(b)++), *, IntLiteral(25)))))]))])"
     assert str(ASTGenerator(source).generate()) == expected
 
 def test_exp_28():
     source = "void main() { a = (a.b + (!b - 3) / 5 || 20 == 10) * (c / 5) * -25 + b++ * 25; }"
-    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([ExprStmt(AssignExpr(a = BinaryOp(BinaryOp(MemberAccess(Identifier(a).b), +, BinaryOp(BinaryOp(PrefixOp(!Identifier(b)), -, IntLiteral(3)), /, BinaryOp(IntLiteral(5), ||, BinaryOp(IntLiteral(20), ==, IntLiteral(10))))), *, BinaryOp(BinaryOp(Identifier(c), /, IntLiteral(5)), *, BinaryOp(IntLiteral(-25), +, BinaryOp(PostfixOp(Identifier(b)++), *, IntLiteral(25)))))))]))])"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([ExprStmt(AssignExpr(a = BinaryOp(BinaryOp(BinaryOp(BinaryOp(BinaryOp(MemberAccess(Identifier(a).b), +, BinaryOp(BinaryOp(PrefixOp(!Identifier(b)), -, IntLiteral(3)), /, IntLiteral(5))), ||, BinaryOp(IntLiteral(20), ==, IntLiteral(10))), *, BinaryOp(Identifier(c), /, IntLiteral(5))), *, IntLiteral(-25)), +, BinaryOp(PostfixOp(Identifier(b)++), *, IntLiteral(25)))))]))])"
     assert str(ASTGenerator(source).generate()) == expected
 
 def test_exp_29():
@@ -308,12 +308,12 @@ def test_if_6():
 
 def test_if_7():
     source = "void main() {if(pong_tin && on_paper || (pretending * wahoo)) { lmao(); } else spot_of_lunch(); }"
-    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([IfStmt(if BinaryOp(Identifier(pong_tin), &&, BinaryOp(Identifier(on_paper), ||, BinaryOp(Identifier(pretending), *, Identifier(wahoo)))) then BlockStmt([ExprStmt(FuncCall(Identifier(lmao), []))]), else ExprStmt(FuncCall(Identifier(spot_of_lunch), [])))]))])"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([IfStmt(if BinaryOp(BinaryOp(Identifier(pong_tin), &&, Identifier(on_paper)), ||, BinaryOp(Identifier(pretending), *, Identifier(wahoo))) then BlockStmt([ExprStmt(FuncCall(Identifier(lmao), []))]), else ExprStmt(FuncCall(Identifier(spot_of_lunch), [])))]))])"
     assert str(ASTGenerator(source).generate()) == expected
 
 def test_if_8():
     source = "void main() {if(ahk || pong_tin && on_paper + 35 || (pretending * wahoo())) { lmao(); } else spot_of_lunch(); }"
-    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([IfStmt(if BinaryOp(Identifier(ahk), ||, BinaryOp(Identifier(pong_tin), &&, BinaryOp(Identifier(on_paper), +, BinaryOp(IntLiteral(35), ||, BinaryOp(Identifier(pretending), *, FuncCall(Identifier(wahoo), [])))))) then BlockStmt([ExprStmt(FuncCall(Identifier(lmao), []))]), else ExprStmt(FuncCall(Identifier(spot_of_lunch), [])))]))])"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([IfStmt(if BinaryOp(BinaryOp(Identifier(ahk), ||, BinaryOp(Identifier(pong_tin), &&, BinaryOp(Identifier(on_paper), +, IntLiteral(35)))), ||, BinaryOp(Identifier(pretending), *, FuncCall(Identifier(wahoo), []))) then BlockStmt([ExprStmt(FuncCall(Identifier(lmao), []))]), else ExprStmt(FuncCall(Identifier(spot_of_lunch), [])))]))])"
     assert str(ASTGenerator(source).generate()) == expected
 
 def test_if_9():
@@ -328,7 +328,7 @@ def test_block_statement_1():
 
 def test_block_statement_2():
     source = "void main() { {int a; int b = fun(); int c = b * a + 3 - fun();} }"
-    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([BlockStmt([VarDecl(IntType(), a), VarDecl(IntType(), b = FuncCall(Identifier(fun), [])), VarDecl(IntType(), c = BinaryOp(Identifier(b), *, BinaryOp(Identifier(a), +, BinaryOp(IntLiteral(3), -, FuncCall(Identifier(fun), [])))))])]))])"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([BlockStmt([VarDecl(IntType(), a), VarDecl(IntType(), b = FuncCall(Identifier(fun), [])), VarDecl(IntType(), c = BinaryOp(BinaryOp(BinaryOp(Identifier(b), *, Identifier(a)), +, IntLiteral(3)), -, FuncCall(Identifier(fun), [])))])]))])"
     assert str(ASTGenerator(source).generate()) == expected
 
 def test_block_statement_3():
@@ -358,7 +358,7 @@ def test_while_4():
 
 def test_while_5():
     source = "void main() {while(8 * hammond || propeller + c) { boat(); a = b + c; box(); }}"
-    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([WhileStmt(while BinaryOp(IntLiteral(8), *, BinaryOp(Identifier(hammond), ||, BinaryOp(Identifier(propeller), +, Identifier(c)))) do BlockStmt([ExprStmt(FuncCall(Identifier(boat), [])), ExprStmt(AssignExpr(a = BinaryOp(Identifier(b), +, Identifier(c)))), ExprStmt(FuncCall(Identifier(box), []))]))]))])"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([WhileStmt(while BinaryOp(BinaryOp(IntLiteral(8), *, Identifier(hammond)), ||, BinaryOp(Identifier(propeller), +, Identifier(c))) do BlockStmt([ExprStmt(FuncCall(Identifier(boat), [])), ExprStmt(AssignExpr(a = BinaryOp(Identifier(b), +, Identifier(c)))), ExprStmt(FuncCall(Identifier(box), []))]))]))])"
     assert str(ASTGenerator(source).generate()) == expected
 
 def test_for_1():
@@ -528,22 +528,22 @@ def test_for_33():
 
 def test_exp_34():
     source = "void main() { a = (a + b) * c / 5; }"
-    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([ExprStmt(AssignExpr(a = BinaryOp(BinaryOp(Identifier(a), +, Identifier(b)), *, BinaryOp(Identifier(c), /, IntLiteral(5)))))]))])"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([ExprStmt(AssignExpr(a = BinaryOp(BinaryOp(BinaryOp(Identifier(a), +, Identifier(b)), *, Identifier(c)), /, IntLiteral(5))))]))])"
     assert str(ASTGenerator(source).generate()) == expected
 
 def test_exp_35():
     source = "void main() { a = (a + (b - 3) / 5 % 20 * 10) * (c / 5); }"
-    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([ExprStmt(AssignExpr(a = BinaryOp(BinaryOp(Identifier(a), +, BinaryOp(BinaryOp(Identifier(b), -, IntLiteral(3)), /, BinaryOp(IntLiteral(5), %, BinaryOp(IntLiteral(20), *, IntLiteral(10))))), *, BinaryOp(Identifier(c), /, IntLiteral(5)))))]))])"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([ExprStmt(AssignExpr(a = BinaryOp(BinaryOp(Identifier(a), +, BinaryOp(BinaryOp(BinaryOp(BinaryOp(Identifier(b), -, IntLiteral(3)), /, IntLiteral(5)), %, IntLiteral(20)), *, IntLiteral(10))), *, BinaryOp(Identifier(c), /, IntLiteral(5)))))]))])"
     assert str(ASTGenerator(source).generate()) == expected
 
 def test_exp_36():
     source = "void main() { a = (a + (b - 3) / 5 % 20 * 10) * (c / 5) * -25 + b++ * 25; }"
-    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([ExprStmt(AssignExpr(a = BinaryOp(BinaryOp(Identifier(a), +, BinaryOp(BinaryOp(Identifier(b), -, IntLiteral(3)), /, BinaryOp(IntLiteral(5), %, BinaryOp(IntLiteral(20), *, IntLiteral(10))))), *, BinaryOp(BinaryOp(Identifier(c), /, IntLiteral(5)), *, BinaryOp(IntLiteral(-25), +, BinaryOp(PostfixOp(Identifier(b)++), *, IntLiteral(25)))))))]))])"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([ExprStmt(AssignExpr(a = BinaryOp(BinaryOp(BinaryOp(BinaryOp(Identifier(a), +, BinaryOp(BinaryOp(BinaryOp(BinaryOp(Identifier(b), -, IntLiteral(3)), /, IntLiteral(5)), %, IntLiteral(20)), *, IntLiteral(10))), *, BinaryOp(Identifier(c), /, IntLiteral(5))), *, IntLiteral(-25)), +, BinaryOp(PostfixOp(Identifier(b)++), *, IntLiteral(25)))))]))])"
     assert str(ASTGenerator(source).generate()) == expected
 
 def test_exp_37():
     source = "void main() { a = (a.b + (!b - 3) / 5 || 20 == 10) * (c / 5) * -25 + b++ * 25; }"
-    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([ExprStmt(AssignExpr(a = BinaryOp(BinaryOp(MemberAccess(Identifier(a).b), +, BinaryOp(BinaryOp(PrefixOp(!Identifier(b)), -, IntLiteral(3)), /, BinaryOp(IntLiteral(5), ||, BinaryOp(IntLiteral(20), ==, IntLiteral(10))))), *, BinaryOp(BinaryOp(Identifier(c), /, IntLiteral(5)), *, BinaryOp(IntLiteral(-25), +, BinaryOp(PostfixOp(Identifier(b)++), *, IntLiteral(25)))))))]))])"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([ExprStmt(AssignExpr(a = BinaryOp(BinaryOp(BinaryOp(BinaryOp(BinaryOp(MemberAccess(Identifier(a).b), +, BinaryOp(BinaryOp(PrefixOp(!Identifier(b)), -, IntLiteral(3)), /, IntLiteral(5))), ||, BinaryOp(IntLiteral(20), ==, IntLiteral(10))), *, BinaryOp(Identifier(c), /, IntLiteral(5))), *, IntLiteral(-25)), +, BinaryOp(PostfixOp(Identifier(b)++), *, IntLiteral(25)))))]))])"
     assert str(ASTGenerator(source).generate()) == expected
 
 def test_switch_stat_1():
@@ -559,4 +559,170 @@ def test_switch_stat_2():
 def test_switch_stat_3():
     source = "void main() {switch (day) { case 1 + 2: printInt(3); break; case (4): printInt(4); break; case +5: printInt(5); break; case -6: printInt(6); break; }}"
     expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([SwitchStmt(switch Identifier(day) cases [CaseStmt(case BinaryOp(IntLiteral(1), +, IntLiteral(2)): [ExprStmt(FuncCall(Identifier(printInt), [IntLiteral(3)])), BreakStmt()]), CaseStmt(case IntLiteral(4): [ExprStmt(FuncCall(Identifier(printInt), [IntLiteral(4)])), BreakStmt()]), CaseStmt(case PrefixOp(+IntLiteral(5)): [ExprStmt(FuncCall(Identifier(printInt), [IntLiteral(5)])), BreakStmt()]), CaseStmt(case IntLiteral(-6): [ExprStmt(FuncCall(Identifier(printInt), [IntLiteral(6)])), BreakStmt()])], default DefaultStmt(default: []))]))])"
+    assert str(ASTGenerator(source).generate()) == expected
+
+
+def test_exp_38():
+    source = "void main() { a = b + c * d - e / f; }"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([ExprStmt(AssignExpr(a = BinaryOp(BinaryOp(Identifier(b), +, BinaryOp(Identifier(c), *, Identifier(d))), -, BinaryOp(Identifier(e), /, Identifier(f)))))]))])"
+
+    """
+    "Program([FuncDecl(VoidType(), main, [], BlockStmt([ExprStmt(AssignExpr(a = 
+    BinaryOp(BinaryOp(Identifier(b), +, BinaryOp(Identifier(c), *, Identifier(d))), -, BinaryOp(Identifier(e), /, Identifier(f)))))]))])"
+    """
+    assert str(ASTGenerator(source).generate()) == expected
+
+
+def test_exp_39():
+    source = "void main() { a = !--foo(); }"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([ExprStmt(AssignExpr(a = PrefixOp(!PrefixOp(--FuncCall(Identifier(foo), [])))))]))])"
+    assert str(ASTGenerator(source).generate()) == expected
+
+
+def test_exp_40():
+    source = "void main() { a = bar.baz().x + 1; }"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([ExprStmt(AssignExpr(a = BinaryOp(MemberAccess(FuncCall(MemberAccess(Identifier(bar).baz), []).x), +, IntLiteral(1))))]))])"
+    assert str(ASTGenerator(source).generate()) == expected
+
+
+def test_exp_41():
+    source = "void main() { obj.field = 42; }"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([ExprStmt(AssignExpr(MemberAccess(Identifier(obj).field) = IntLiteral(42)))]))])"
+    assert str(ASTGenerator(source).generate()) == expected
+
+
+def test_exp_42():
+    source = "void main() { a = {1, 2, {3, 4}}; }"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([ExprStmt(AssignExpr(a = StructLiteral({IntLiteral(1), IntLiteral(2), StructLiteral({IntLiteral(3), IntLiteral(4)})})))]))])"
+    assert str(ASTGenerator(source).generate()) == expected
+
+def test_exp_43():
+    source = "void main() { a = (a + b) * c; }"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([ExprStmt(AssignExpr(a = BinaryOp(BinaryOp(Identifier(a), +, Identifier(b)), *, Identifier(c))))]))])"
+    assert str(ASTGenerator(source).generate()) == expected
+
+def test_exp_44():
+    source = "void main() { a = a * (b + c); }"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([ExprStmt(AssignExpr(a = BinaryOp(Identifier(a), *, BinaryOp(Identifier(b), +, Identifier(c)))))]))])"
+    assert str(ASTGenerator(source).generate()) == expected
+
+def test_exp_45():
+    source = "void main() { a = a + b + c; }"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([ExprStmt(AssignExpr(a = BinaryOp(BinaryOp(Identifier(a), +, Identifier(b)), +, Identifier(c))))]))])"
+    assert str(ASTGenerator(source).generate()) == expected
+
+def test_exp_46():
+    source = "void main() { a = a + b * c + d; }"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([ExprStmt(AssignExpr(a = BinaryOp(BinaryOp(Identifier(a), +, BinaryOp(Identifier(b), *, Identifier(c))), +, Identifier(d))))]))])"
+    assert str(ASTGenerator(source).generate()) == expected
+
+def test_exp_47():
+    source = "void main() { a = (a + b) * (c + d); }"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([ExprStmt(AssignExpr(a = BinaryOp(BinaryOp(Identifier(a), +, Identifier(b)), *, BinaryOp(Identifier(c), +, Identifier(d)))))]))])"
+    assert str(ASTGenerator(source).generate()) == expected
+
+def test_exp_48():
+    source = "void main() { a = (a || b) && (c || d); }"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([ExprStmt(AssignExpr(a = BinaryOp(BinaryOp(Identifier(a), ||, Identifier(b)), &&, BinaryOp(Identifier(c), ||, Identifier(d)))))]))])"
+    assert str(ASTGenerator(source).generate()) == expected
+
+def test_stmt_1():
+    source = "void main() { return; }"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([ReturnStmt(return)]))])"
+    assert str(ASTGenerator(source).generate()) == expected
+
+
+def test_stmt_2():
+    source = "void main() { while (i < 10) { if (i == 5) break; continue; } }"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([WhileStmt(while BinaryOp(Identifier(i), <, IntLiteral(10)) do BlockStmt([IfStmt(if BinaryOp(Identifier(i), ==, IntLiteral(5)) then BreakStmt()), ContinueStmt()]))]))])"
+    assert str(ASTGenerator(source).generate()) == expected
+
+
+def test_stmt_3():
+    source = "void main() { for (;; ) { x = x + 1; } }"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([ForStmt(for None; None; None do BlockStmt([ExprStmt(AssignExpr(x = BinaryOp(Identifier(x), +, IntLiteral(1))))]))]))])"
+    assert str(ASTGenerator(source).generate()) == expected
+
+
+def test_stmt_4():
+    source = "void main() { switch (x) { default: x = 0; } }"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([SwitchStmt(switch Identifier(x) cases [], default DefaultStmt(default: [ExprStmt(AssignExpr(x = IntLiteral(0)))]))]))])"
+    assert str(ASTGenerator(source).generate()) == expected
+
+
+def test_stmt_5():
+    source = "void main() { { int a = 1; { int b = a + 2; } } }"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([BlockStmt([VarDecl(IntType(), a = IntLiteral(1)), BlockStmt([VarDecl(IntType(), b = BinaryOp(Identifier(a), +, IntLiteral(2)))])])]))])"
+    assert str(ASTGenerator(source).generate()) == expected
+
+
+def test_decl_1():
+    source = "add(int x, int y) { return x + y; }"
+    expected = "Program([FuncDecl(auto, add, [Param(IntType(), x), Param(IntType(), y)], BlockStmt([ReturnStmt(return BinaryOp(Identifier(x), +, Identifier(y)))]))])"
+    assert str(ASTGenerator(source).generate()) == expected
+
+
+def test_decl_2():
+    source = "struct S; struct T { int x; };"
+    expected = "Program([StructDecl(S, []), StructDecl(T, [MemberDecl(IntType(), x)])])"
+    assert str(ASTGenerator(source).generate()) == expected
+
+
+def test_decl_3():
+    source = "void main() { auto x; int y = 2; string s = \"hi\"; }"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([VarDecl(auto, x), VarDecl(IntType(), y = IntLiteral(2)), VarDecl(StringType(), s = StringLiteral('hi'))]))])"
+    assert str(ASTGenerator(source).generate()) == expected
+
+
+def test_decl_4():
+    source = "void main() { Point p = {1,2}; }"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([VarDecl(StructType(Point), p = StructLiteral({IntLiteral(1), IntLiteral(2)}))]))])"
+    assert str(ASTGenerator(source).generate()) == expected
+
+
+def test_integration_1():
+    source = '''
+        struct Point {
+            int x;
+            int y;
+        };
+        int dist(Point p) {
+            return p.x + p.y;
+        }
+        void main() {
+            Point a = {1,2};
+            int d = dist(a);
+        }
+    '''
+    expected = "Program([StructDecl(Point, [MemberDecl(IntType(), x), MemberDecl(IntType(), y)]), FuncDecl(IntType(), dist, [Param(StructType(Point), p)], BlockStmt([ReturnStmt(return BinaryOp(MemberAccess(Identifier(p).x), +, MemberAccess(Identifier(p).y)))])), FuncDecl(VoidType(), main, [], BlockStmt([VarDecl(StructType(Point), a = StructLiteral({IntLiteral(1), IntLiteral(2)})), VarDecl(IntType(), d = FuncCall(Identifier(dist), [Identifier(a)]))]))])"
+    assert str(ASTGenerator(source).generate()) == expected
+
+
+def test_integration_2():
+    source = "void main() { if (a) for (int i = 0; i < 2; i++) { switch (i) { case 0: a = 1; break; default: a = 2; } } }"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([IfStmt(if Identifier(a) then ForStmt(for VarDecl(IntType(), i = IntLiteral(0)); BinaryOp(Identifier(i), <, IntLiteral(2)); PostfixOp(Identifier(i)++) do BlockStmt([SwitchStmt(switch Identifier(i) cases [CaseStmt(case IntLiteral(0): [ExprStmt(AssignExpr(a = IntLiteral(1))), BreakStmt()])], default DefaultStmt(default: [ExprStmt(AssignExpr(a = IntLiteral(2)))]))])))]))])"
+    assert str(ASTGenerator(source).generate()) == expected
+
+
+def test_integration_3():
+    source = "void f() {} int g(int x) { return x * 2; } void main() { int y = g(f(), 1); }"
+    expected = "Program([FuncDecl(VoidType(), f, [], BlockStmt([])), FuncDecl(IntType(), g, [Param(IntType(), x)], BlockStmt([ReturnStmt(return BinaryOp(Identifier(x), *, IntLiteral(2)))])), FuncDecl(VoidType(), main, [], BlockStmt([VarDecl(IntType(), y = FuncCall(Identifier(g), [FuncCall(Identifier(f), []), IntLiteral(1)]))]))])"
+    assert str(ASTGenerator(source).generate()) == expected
+
+
+def test_stress_1():
+    source = "void main() { a = {{{{1}}}}; }"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([ExprStmt(AssignExpr(a = StructLiteral({StructLiteral({StructLiteral({StructLiteral({IntLiteral(1)})})})})))]))])"
+    assert str(ASTGenerator(source).generate()) == expected
+
+
+def test_stress_2():
+    source = "void main() { if (a && (b || c)) { for (int i = 0; i < 3; i++) { while (x < y) { switch (x) { case 1: x++; break; default: x = x + 1; } } } } }"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([IfStmt(if BinaryOp(Identifier(a), &&, BinaryOp(Identifier(b), ||, Identifier(c))) then BlockStmt([ForStmt(for VarDecl(IntType(), i = IntLiteral(0)); BinaryOp(Identifier(i), <, IntLiteral(3)); PostfixOp(Identifier(i)++) do BlockStmt([WhileStmt(while BinaryOp(Identifier(x), <, Identifier(y)) do BlockStmt([SwitchStmt(switch Identifier(x) cases [CaseStmt(case IntLiteral(1): [ExprStmt(PostfixOp(Identifier(x)++)), BreakStmt()])], default DefaultStmt(default: [ExprStmt(AssignExpr(x = BinaryOp(Identifier(x), +, IntLiteral(1))))]))]))]))]))]))])"
+    assert str(ASTGenerator(source).generate()) == expected
+
+
+def test_stress_3():
+    source = "void main() { result = (a.b + foo(c, d.e)) * -(x - y); }"
+    expected = "Program([FuncDecl(VoidType(), main, [], BlockStmt([ExprStmt(AssignExpr(result = BinaryOp(BinaryOp(MemberAccess(Identifier(a).b), +, FuncCall(Identifier(foo), [Identifier(c), MemberAccess(Identifier(d).e)])), *, PrefixOp(-BinaryOp(Identifier(x), -, Identifier(y))))))]))])"
     assert str(ASTGenerator(source).generate()) == expected

@@ -582,7 +582,7 @@ class TyCBuilder:
                     f"--html={ast_report_dir}/test_ast_{curr_time}.html",
                     "--timeout=5",
                     "--self-contained-html",
-                    "-v",
+                    "-vv",
                 ],
                 check=False,
             )

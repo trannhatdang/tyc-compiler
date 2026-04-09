@@ -509,7 +509,7 @@ class ASTGeneration(TyCVisitor):
         elif float_lit:
             ret = FloatLiteral(float_lit)
         elif string_lit:
-            ret = StringLiteral(string_lit)
+            ret = StringLiteral(f"{string_lit}")
         elif struct_lit:
             ret = self.visit(struct_lit)
         else:
@@ -539,10 +539,19 @@ class ASTGeneration(TyCVisitor):
     def visitExpr(self, ctx:TyCParser.ExprContext):
         expr_ctx = ctx.expr()
 
-        if not expr_ctx:
+        if len(expr_ctx) == 2:
+            bin_op = ctx.children[1]
+            l_expr = self.visit(expr_ctx[0])
+            r_expr = self.visit(expr_ctx[1])
+            # l_bin_expr = self.visit(ctx.l_bin_expr()):
+            return BinaryOp(l_expr, bin_op, r_expr)
+
+        if len(expr_ctx) == 0:
             lvalue_ctx = ctx.lvalue()
 
             return self.visit(lvalue_ctx)
+
+        expr_ctx = expr_ctx[0]
 
         arg_list_ctx = ctx.arg_list()
 
@@ -575,15 +584,8 @@ class ASTGeneration(TyCVisitor):
 
         un_op_ctx = ctx.un_op()
 
-        if un_op_ctx:
-            un_op = self.visit(un_op_ctx)
-            return PrefixOp(un_op, expr)
-
-        bin_op_ctx = ctx.bin_op()
-
-        bin_op = self.visit(bin_op_ctx)
-        r_bin_expr = self.visit(ctx.r_bin_expr())
-        return BinaryOp(expr, bin_op, r_bin_expr)
+        un_op = self.visit(un_op_ctx)
+        return PrefixOp(un_op, expr)
 
     # Visit a parse tree produced by TyCParser#assign_expr.
     def visitAssign_expr(self, ctx:TyCParser.Assign_exprContext):
@@ -620,10 +622,6 @@ class ASTGeneration(TyCVisitor):
     # Visit a parse tree produced by TyCParser#arg.
     def visitArg(self, ctx:TyCParser.ArgContext):
         return self.visit(ctx.expr())
-
-    # Visit a parse tree produced by TyCParser#bin_op.
-    def visitBin_op(self, ctx:TyCParser.Bin_opContext):
-        return ctx.children[0]
 
     # Visit a parse tree produced by TyCParser#un_op.
     def visitUn_op(self, ctx:TyCParser.Un_opContext):
